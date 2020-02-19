@@ -26,9 +26,9 @@ public class GoodsController {
         return goodsService.getGoodsList(new GoodsVO());
     }
 
-    @PostMapping("/search")
-    public CommonDTO<GoodsEntity> search(@RequestBody GoodsVO vo) {
-        return goodsService.searchGoodsList(vo);
+    @GetMapping("/search")
+    public CommonDTO<GoodsEntity> search(@RequestParam("goodsName") String goodsName) {
+        return goodsService.searchGoodsList(goodsName);
     }
 
     @PostMapping("/save")

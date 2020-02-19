@@ -1,9 +1,15 @@
 package com.sleepy.goods.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.sleepy.goods.dto.CartDTO;
 import com.sleepy.goods.dto.CommonDTO;
+import com.sleepy.goods.dto.ExtraDTO;
 import com.sleepy.goods.dto.UserDTO;
+import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.entity.UserEntity;
+import com.sleepy.goods.repository.GoodsRepository;
+import com.sleepy.goods.repository.OrderRepository;
 import com.sleepy.goods.repository.UserRepository;
 import com.sleepy.goods.service.UserService;
 import com.sleepy.goods.util.HttpUtil;
@@ -11,19 +17,16 @@ import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.UserVO;
 import com.sleepy.jpql.JpqlParser;
 import com.sleepy.jpql.ParserParameter;
-import lombok.Data;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * 用户ServiceImpl
@@ -35,6 +38,10 @@ import java.util.NoSuchElementException;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    GoodsRepository goodsRepository;
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     JpqlParser jpqlParser;
@@ -47,23 +54,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public CommonDTO<UserDTO> getUserInfoById(String id) {
-        CommonDTO<UserDTO> result = new CommonDTO<>();
         Map<String, Object> parameters = new HashMap<>(4);
         parameters.put("id", id);
         List<UserDTO> entities = findUser(parameters);
-        result.setResult(entities.get(0));
+        return getUserDetailResult(entities);
+    }
+
+    private CommonDTO<UserDTO> getUserDetailResult(List<UserDTO> entities) {
+        CommonDTO<UserDTO> result = new CommonDTO<>();
+        UserDTO data = entities.get(0);
+        JSONObject carts = JSON.parseObject(data.getCartInfo());
+        Map<String, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
+        List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(cartsMap.keySet()));
+        result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("goods", goods),
+                new ExtraDTO("carts", new ArrayList<>(cartsMap.values())),
+                new ExtraDTO("orders", orderRepository.findByUserId(data.getUserId()))));
+        data.setCartInfo(null);
+        result.setResult(data);
         return result;
     }
 
     @Override
     public CommonDTO<UserDTO> getUserInfoByCode(String code) throws Exception {
-        CommonDTO<UserDTO> result = new CommonDTO<>();
         Map<String, Object> parameters = new HashMap<>(4);
         parameters.put("openId", code);
         List<UserDTO> entities = findUser(parameters);
         if (entities.size() > 0) {
-            result.setResult(entities.get(0));
-            return result;
+            return getUserDetailResult(entities);
         } else {
             UserVO vo = new UserVO();
             vo.setWxCode(code);
@@ -89,10 +106,9 @@ public class UserServiceImpl implements UserService {
             user.setDeliveryInfo(vo.getDeliveryInfo());
         }
         UserEntity entity = userRepository.saveAndFlush(user);
-        entity.setOpenId(null);
-        Map<String, Object> extra = new HashMap<>(4);
-        extra.put("data", entity);
-        result.setExtra(extra);
+        UserDTO data = new UserDTO();
+        BeanUtils.copyProperties(entity, data);
+        result.setResult(data);
         result.setMessage("保存成功");
 
         return result;
@@ -111,10 +127,9 @@ public class UserServiceImpl implements UserService {
                 user.setDeliveryInfo(vo.getDeliveryInfo());
             }
             UserEntity entity = userRepository.saveAndFlush(user);
-            entity.setOpenId(null);
-            Map<String, Object> extra = new HashMap<>(4);
-            extra.put("data", entity);
-            result.setExtra(extra);
+            UserDTO data = new UserDTO();
+            BeanUtils.copyProperties(entity, data);
+            result.setResult(data);
             result.setMessage("更新成功");
         } else {
             throw new Exception("userId 不能为空，请确认参数是否完备");
@@ -124,8 +139,11 @@ public class UserServiceImpl implements UserService {
 
     private List<UserDTO> findUser(Map<String, Object> parameters) {
         String sql = jpqlParser.parse(new ParserParameter("userJpql.findUser", parameters, "mysql")).getExecutableSql();
-        Query query = getSession().createNativeQuery(sql).addEntity(UserDTO.class);
-        return query.getResultList();
+        Session session = getSession();
+        Query query = session.createNativeQuery(sql).addEntity(UserDTO.class);
+        List<UserDTO> resultList = query.getResultList();
+        session.close();
+        return resultList;
     }
 
     private String getWeixinOpenId(UserVO vo) throws Exception {
@@ -142,11 +160,5 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new Exception("wxCode 不能为空， 请确认参数是否完备");
         }
-    }
-
-    @Data
-    class WeixinAuthResult {
-        private String session_key;
-        private String openid;
     }
 }

@@ -21,15 +21,24 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/get")
-    public CommonDTO<UserDTO> get(@RequestParam(value = "code", required = false) String code, @RequestParam(value = "id", required = false) String id) throws Exception {
+    @GetMapping("/getById")
+    public CommonDTO<UserDTO> getById(@RequestParam("userId") String id) throws Exception {
         if (!StringUtil.isNullOrEmpty(id)) {
             return userService.getUserInfoById(id);
-        } else if (!StringUtil.isNullOrEmpty(code)) {
+        } else {
+            CommonDTO<UserDTO> result = new CommonDTO<>();
+            result.setMessage("参数缺失，请检查是否传递了id");
+            return result;
+        }
+    }
+
+    @GetMapping("/getByCode")
+    public CommonDTO<UserDTO> getByCode(@RequestParam("code") String code) throws Exception {
+        if (!StringUtil.isNullOrEmpty(code)) {
             return userService.getUserInfoByCode(code);
         } else {
             CommonDTO<UserDTO> result = new CommonDTO<>();
-            result.setMessage("参数缺失，请检查是否传递了code或id");
+            result.setMessage("参数缺失，请检查是否传递了code");
             return result;
         }
     }

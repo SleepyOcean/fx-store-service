@@ -35,7 +35,6 @@ public class ControllerInterceptor {
     @Around("controllerAnnotationPointCut() &&args(..)")
     public CommonDTO<Object> around(ProceedingJoinPoint point) {
         CommonDTO<Object> result = new CommonDTO<>();
-
         try {
             Long startTime = System.currentTimeMillis();
             result = (CommonDTO<Object>) point.proceed();

@@ -34,4 +34,8 @@ public class Constant {
     public static final String IMG_TYPE_COVER = "封面";
     public static final String IMG_TYPE_OTHERS = "其他";
     public static final String IMG_TYPE_WALLPAPER = "壁纸";
+
+
+    // 字符串中属性分隔符号
+    public static final String PROPERTY_SPLIT_SYMBOL = ":";
 }

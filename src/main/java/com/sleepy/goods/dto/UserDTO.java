@@ -22,4 +22,10 @@ public class UserDTO {
 
     @Column(name = "delivery_info")
     private String deliveryInfo;
+
+    @Column(name = "cart_info", columnDefinition = "text")
+    private String cartInfo;
+
+    @Column(name = "order_list", columnDefinition = "text")
+    private String orderList;
 }

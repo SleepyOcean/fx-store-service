@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.sleepy</groupId>
-    <artifactId>goods-manage-system</artifactId>
+    <artifactId>fx-store-service</artifactId>
     <version>1.0.0</version>
-    <name>goods-manage-system</name>
+    <name>fx-store-service</name>
     <properties>
         <java.version>1.8</java.version>
     </properties>

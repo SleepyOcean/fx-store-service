@@ -31,4 +31,12 @@ public class UserEntity {
     @Column(name = "delivery_info")
     @ApiModelProperty("收货信息： 收货人姓名+收货人联系方式+收货地址，多个以逗号分隔")
     private String deliveryInfo;
+
+    @Column(name = "cart_info", columnDefinition = "text")
+    @ApiModelProperty("购物车信息： 商品id+商品数量，多个以逗号分隔")
+    private String cartInfo;
+
+    @Column(name = "order_list", columnDefinition = "text")
+    @ApiModelProperty("订单列表id，多个以逗号分隔")
+    private String orderList;
 }

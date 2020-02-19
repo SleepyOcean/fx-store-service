@@ -30,6 +30,10 @@ public class GoodsEntity {
     @Column(name = "storage_num")
     private String storageNum;
 
+    @ApiModelProperty("库存单位")
+    @Column(name = "storage_unit")
+    private String storageUnit;
+
     @ApiModelProperty("商品描述")
     @Column(name = "goods_desc")
     private String goodsDesc;

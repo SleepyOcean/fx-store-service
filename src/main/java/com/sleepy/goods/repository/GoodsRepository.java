@@ -14,4 +14,6 @@ import java.util.List;
 
 public interface GoodsRepository extends JpaRepository<GoodsEntity, String> {
     List<GoodsEntity> findAllByGoodsNameIsLike(String goodsName);
+
+    List<GoodsEntity> findAllByGoodsIdIn(List<String> ids);
 }

@@ -17,4 +17,6 @@ public class UserVO {
     private String userId;
     private String userName;
     private String deliveryInfo;
+    private String cartInfo;
+    private String orderList;
 }

@@ -23,6 +23,9 @@ public class GoodsVO {
     @ApiModelProperty("库存剩余")
     private String storageNum;
 
+    @ApiModelProperty("库存单位")
+    private String storageUnit;
+
     @ApiModelProperty("商品描述")
     private String goodsDesc;
 

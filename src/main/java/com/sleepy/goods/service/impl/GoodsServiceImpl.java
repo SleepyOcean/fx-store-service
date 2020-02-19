@@ -42,6 +42,7 @@ public class GoodsServiceImpl implements GoodsService {
                 good.setGoodsPriceNow(goodsVO.getGoodsPriceNow());
                 good.setImgUrl(goodsVO.getImgUrl());
                 good.setStorageNum(goodsVO.getStorageNum());
+                good.setStorageUnit(goodsVO.getStorageUnit());
                 good.setGoodsDesc(goodsVO.getGoodsDesc());
                 goodsRepository.save(good);
             });
@@ -56,6 +57,7 @@ public class GoodsServiceImpl implements GoodsService {
             good.setGoodsPriceNow(vo.getGoodsPriceNow());
             good.setImgUrl(vo.getImgUrl());
             good.setStorageNum(vo.getStorageNum());
+            good.setStorageUnit(vo.getStorageUnit());
             good.setGoodsDesc(StringUtil.isNullOrEmpty(vo.getGoodsDesc()) ? "" : vo.getGoodsDesc());
             goodsRepository.save(good);
         } else {
@@ -65,9 +67,9 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public CommonDTO<GoodsEntity> searchGoodsList(GoodsVO vo) {
+    public CommonDTO<GoodsEntity> searchGoodsList(String goodsName) {
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
-        List<GoodsEntity> data = goodsRepository.findAllByGoodsNameIsLike("%" + vo.getGoodsName() + "%");
+        List<GoodsEntity> data = goodsRepository.findAllByGoodsNameIsLike("%" + goodsName + "%");
         result.setResultList(data);
         result.setTotal((long) data.size());
         return result;

@@ -1,14 +1,16 @@
 package com.sleepy.goods.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sleepy.goods.dto.ExtraDTO;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Random;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +34,49 @@ public class StringUtil {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 判断字符串是否不为空
+     *
+     * @param string
+     * @return
+     */
+    public static boolean isNotNullOrEmpty(String string) {
+        return !isNullOrEmpty(string);
+    }
+
+    /**
+     * 判断多个字符串是否都不为空
+     *
+     * @param strings
+     * @return
+     */
+    public static boolean stringsIsNotEmpty(String... strings) {
+        for (String s : strings) {
+            if (isNullOrEmpty(s)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * 抛出指定信息的异常
+     *
+     * @param info
+     * @return
+     * @throws Exception
+     */
+    public static boolean throwExceptionInfo(String info) throws Exception {
+        throw new Exception(info);
+    }
+
+    public static String formatDate(Date date, String format) {
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        return df.format(date);
+    }
+
+    public static String getDateString(Date date) {
+        return formatDate(date, "yyyy-MM-dd HH:mm:ss");
     }
 
     /**
@@ -76,6 +121,17 @@ public class StringUtil {
      */
     public static String getRandomUuid(String intervalMark) {
         return UUID.randomUUID().toString().replaceAll("-", intervalMark);
+    }
+
+    public static Map jsonObjectToMap(JSONObject jsonObject) {
+        Map<String, Object> data = new HashMap<>();
+        //循环转换
+        Iterator it = jsonObject.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Object> entry = (Map.Entry<String, Object>) it.next();
+            data.put(entry.getKey(), entry.getValue());
+        }
+        return data;
     }
 
     /**
@@ -136,5 +192,13 @@ public class StringUtil {
             s.append(random.nextInt(9));
         }
         return s.toString();
+    }
+
+    public static Map<String, Object> getNewExtraMap(ExtraDTO... extras) {
+        Map<String, Object> extra = new HashMap<>(extras.length);
+        for (ExtraDTO extraDTO : extras) {
+            extra.put(extraDTO.getKey(), extraDTO.getValue());
+        }
+        return extra;
     }
 }
