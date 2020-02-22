@@ -3,6 +3,7 @@ package com.sleepy.goods.service;
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.vo.GoodsVO;
+import com.sleepy.goods.vo.goods.GoodsNewVO;
 
 /**
  * 商品服务Service
@@ -13,7 +14,7 @@ import com.sleepy.goods.vo.GoodsVO;
 public interface GoodsService {
     CommonDTO<GoodsEntity> getGoodsList(GoodsVO vo);
 
-    CommonDTO<GoodsEntity> saveGoodsList(GoodsVO vo) throws Exception;
+    CommonDTO<GoodsEntity> saveGoodsList(GoodsNewVO vo) throws Exception;
 
     CommonDTO<GoodsEntity> searchGoodsList(String goodsName);
 }

@@ -6,6 +6,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 
 /**
  * controller方法拦截器
@@ -24,6 +25,25 @@ public class ControllerInterceptor {
 
     @Before("controllerAnnotationPointCut()")
     public void doBefore(JoinPoint joinPoint) {
+    }
+
+    /**
+     * 拦截Controller中带BindingResult的方法
+     *
+     * @param point
+     * @param bindingResult
+     * @return
+     */
+    @Around("controllerAnnotationPointCut() &&args(..,bindingResult)")
+    public CommonDTO<Object> around(ProceedingJoinPoint point, BindingResult bindingResult) {
+        CommonDTO<Object> result = new CommonDTO<>();
+        if (bindingResult.hasErrors()) {
+            result.setStatus(503);
+            result.setMessage(bindingResult.getFieldError().getDefaultMessage());
+            log.error("http请求参数不规范：" + bindingResult.getFieldError().getDefaultMessage());
+            return result;
+        }
+        return around(point);
     }
 
     /**

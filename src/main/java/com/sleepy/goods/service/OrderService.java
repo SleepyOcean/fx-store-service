@@ -5,6 +5,7 @@ import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.entity.OrderEntity;
 import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.OrderVO;
+import com.sleepy.goods.vo.order.OrderNewVO;
 
 /**
  * @author Captain1920
@@ -13,7 +14,7 @@ import com.sleepy.goods.vo.OrderVO;
 public interface OrderService {
     CommonDTO<OrderEntity> getOrderList(String userId);
 
-    CommonDTO<OrderEntity> saveOrder(OrderVO vo) throws Exception;
+    CommonDTO<OrderEntity> saveOrder(OrderNewVO vo) throws Exception;
 
     CommonDTO<CartDTO> getCartList(String userId);
 

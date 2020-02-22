@@ -14,17 +14,17 @@ import lombok.Data;
 @ApiModel("订单参数")
 public class OrderVO {
 
+    @ApiModelProperty("订单ID")
+    private String orderId;
+
     @ApiModelProperty("用户ID")
     private String userId;
 
     @ApiModelProperty("商品ID集合+商品数量，多个以逗号分隔")
     private String goods;
 
-    @ApiModelProperty("联系方式")
-    private String contact;
-
     @ApiModelProperty("收获地址")
-    private String deliveryAddress;
+    private String addressId;
 
     @ApiModelProperty("下单时间")
     private String orderTime;
@@ -39,7 +39,7 @@ public class OrderVO {
     private String deliveryWay;
 
     @ApiModelProperty("配送状态, -1：未配送，0：配送中，1：配送完成")
-    private String deliveryStatus;
+    private Integer deliveryStatus;
 
     @ApiModelProperty("配送人")
     private String deliveryMan;

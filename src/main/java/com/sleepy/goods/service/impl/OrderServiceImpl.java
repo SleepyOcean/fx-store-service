@@ -2,12 +2,15 @@ package com.sleepy.goods.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.sleepy.goods.common.Constant;
 import com.sleepy.goods.dto.CartDTO;
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.dto.ExtraDTO;
+import com.sleepy.goods.entity.AddressEntity;
 import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.entity.OrderEntity;
 import com.sleepy.goods.entity.UserEntity;
+import com.sleepy.goods.repository.AddressRepository;
 import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.repository.OrderRepository;
 import com.sleepy.goods.repository.UserRepository;
@@ -15,6 +18,7 @@ import com.sleepy.goods.service.OrderService;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.OrderVO;
+import com.sleepy.goods.vo.order.OrderNewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +43,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     GoodsRepository goodsRepository;
 
+    @Autowired
+    AddressRepository addressRepository;
+
     @Override
     public CommonDTO<OrderEntity> getOrderList(String userId) {
         List<OrderEntity> data = orderRepository.findByUserId(userId);
@@ -46,19 +53,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public CommonDTO<OrderEntity> saveOrder(OrderVO vo) throws Exception {
+    public CommonDTO<OrderEntity> saveOrder(OrderNewVO vo) throws Exception {
         CommonDTO<OrderEntity> result = new CommonDTO<>();
-        if (StringUtil.stringsIsNotEmpty(vo.getUserId(), vo.getGoods(), vo.getContact(), vo.getDeliveryAddress())) {
-            OrderEntity entity = new OrderEntity();
-            entity.setUserId(vo.getUserId());
-            entity.setGoods(vo.getGoods());
-            entity.setContact(vo.getContact());
-            entity.setDeliveryAddress(vo.getDeliveryAddress());
+        OrderEntity entity = new OrderEntity(vo);
+        String[] goodsArray = vo.getGoods().split(Constant.COMMA);
+        if (goodsArray.length > 0) {
+            double goodsTotalPrice = 0;
+            for (String goods : goodsArray) {
+                String[] info = goods.split(":");
+                goodsTotalPrice += Integer.parseInt(info[1]) * Double.parseDouble(info[2]);
+            }
+            entity.setGoodsTotalPrice(goodsTotalPrice);
+            entity.setTotalPrice(goodsTotalPrice);
             entity.setOrderTime(StringUtil.getDateString(new Date()));
-            entity.setDeliveryStatus("-1");
             result.setResult(orderRepository.saveAndFlush(entity));
         } else {
-            StringUtil.throwExceptionInfo("参数userId,goodsIds,contact,deliveryAddress需均不为空，请检查参数是否完备！");
+            StringUtil.throwExceptionInfo("订单商品不能为空");
         }
         return result;
     }
@@ -68,15 +78,17 @@ public class OrderServiceImpl implements OrderService {
         CommonDTO<CartDTO> result = new CommonDTO<>();
         UserEntity entity = userRepository.findByUserId(userId).get();
         String cartString = entity.getCartInfo();
-        JSONObject carts = JSON.parseObject(cartString);
-        Map<String, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
-        List<CartDTO> data = new ArrayList<>(cartsMap.values());
-        List<String> goodsIds = new ArrayList<>(cartsMap.keySet());
-        List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(goodsIds);
+        if (StringUtil.isNotNullOrEmpty(cartString)) {
+            JSONObject carts = JSON.parseObject(cartString);
+            Map<String, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
+            List<CartDTO> data = new ArrayList<>(cartsMap.values());
+            List<String> goodsIds = new ArrayList<>(cartsMap.keySet());
+            List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(goodsIds);
 
-        result.setResultList(data);
-        result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("goods", goods)));
-        result.setTotal((long) data.size());
+            result.setResultList(data);
+            result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("goods", goods)));
+            result.setTotal((long) data.size());
+        }
         return result;
     }
 
@@ -98,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
                 cart.setSelectedNum("0");
             }
 
-            int storageNum = Integer.parseInt(goodsRepository.findById(vo.getGoodsId()).get().getStorageNum());
+            int storageNum = goodsRepository.findById(vo.getGoodsId()).get().getStorageNum();
             int selectedNum = Integer.parseInt(cart.getSelectedNum()) + vo.getValueChange();
             if (selectedNum < storageNum) {
                 cart.setSelectedNum(selectedNum + "");
@@ -138,25 +150,36 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public CommonDTO<OrderEntity> getOrderListByCond(OrderVO vo) {
-        if (StringUtil.isNotNullOrEmpty(vo.getDeliveryStatus())) {
+        if (vo.getDeliveryStatus() != null) {
             List<OrderEntity> data = orderRepository.findAllByDeliveryStatusOrderByOrderTimeDesc(vo.getDeliveryStatus());
             return getOrderDetailResult(data);
         }
-        return null;
+        if (StringUtil.isNotNullOrEmpty(vo.getOrderId())) {
+            OrderEntity entity = orderRepository.findById(vo.getOrderId()).get();
+            return getOrderDetailResult(Arrays.asList(entity));
+        } else {
+            List<OrderEntity> data = orderRepository.findAllByOrderByOrderTimeDesc();
+            return getOrderDetailResult(data);
+        }
     }
 
     private CommonDTO<OrderEntity> getOrderDetailResult(List<OrderEntity> data) {
         CommonDTO<OrderEntity> result = new CommonDTO<>();
         Set<String> goodsIds = new HashSet<>();
+        Set<String> addressIds = new HashSet<>();
         data.forEach(d -> {
             for (String s : d.getGoods().split(",")) {
                 goodsIds.add(s.split(":")[0]);
+                addressIds.add(d.getAddressId());
             }
         });
         List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(goodsIds));
+        List<AddressEntity> address = addressRepository.findAllByAddressIdIn(new ArrayList<>(addressIds));
 
         result.setResultList(data);
-        result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("goods", goods.stream().collect(Collectors.toMap(GoodsEntity::getGoodsId, p -> p)))));
+        result.setExtra(StringUtil.getNewExtraMap(
+                new ExtraDTO("goods", goods.stream().collect(Collectors.toMap(GoodsEntity::getGoodsId, p -> p))),
+                new ExtraDTO("address", address.stream().collect(Collectors.toMap(AddressEntity::getAddressId, p -> p)))));
         result.setTotal((long) data.size());
         return result;
     }

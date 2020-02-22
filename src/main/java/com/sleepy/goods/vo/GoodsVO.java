@@ -1,5 +1,6 @@
 package com.sleepy.goods.vo;
 
+import com.sleepy.goods.vo.goods.GoodsNewVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class GoodsVO {
 
     @ApiModelProperty("商品数组")
-    private List<GoodsVO> goods;
+    private List<GoodsNewVO> goods;
 
     @ApiModelProperty("商品名称")
     private String goodsName;

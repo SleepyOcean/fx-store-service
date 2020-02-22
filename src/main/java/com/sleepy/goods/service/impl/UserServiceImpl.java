@@ -6,15 +6,19 @@ import com.sleepy.goods.dto.CartDTO;
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.dto.ExtraDTO;
 import com.sleepy.goods.dto.UserDTO;
+import com.sleepy.goods.entity.AddressEntity;
 import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.entity.UserEntity;
+import com.sleepy.goods.repository.AddressRepository;
 import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.repository.OrderRepository;
 import com.sleepy.goods.repository.UserRepository;
 import com.sleepy.goods.service.UserService;
 import com.sleepy.goods.util.HttpUtil;
 import com.sleepy.goods.util.StringUtil;
-import com.sleepy.goods.vo.UserVO;
+import com.sleepy.goods.vo.user.AddressNewVO;
+import com.sleepy.goods.vo.user.AddressVO;
+import com.sleepy.goods.vo.user.UserVO;
 import com.sleepy.jpql.JpqlParser;
 import com.sleepy.jpql.ParserParameter;
 import org.hibernate.Session;
@@ -42,6 +46,8 @@ public class UserServiceImpl implements UserService {
     GoodsRepository goodsRepository;
     @Autowired
     OrderRepository orderRepository;
+    @Autowired
+    AddressRepository addressRepository;
 
     @Autowired
     JpqlParser jpqlParser;
@@ -63,12 +69,17 @@ public class UserServiceImpl implements UserService {
     private CommonDTO<UserDTO> getUserDetailResult(List<UserDTO> entities) {
         CommonDTO<UserDTO> result = new CommonDTO<>();
         UserDTO data = entities.get(0);
-        JSONObject carts = JSON.parseObject(data.getCartInfo());
-        Map<String, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
-        List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(cartsMap.keySet()));
-        result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("goods", goods),
-                new ExtraDTO("carts", new ArrayList<>(cartsMap.values())),
-                new ExtraDTO("orders", orderRepository.findByUserId(data.getUserId()))));
+        String cartString = data.getCartInfo();
+        if (StringUtil.isNotNullOrEmpty(cartString)) {
+            JSONObject carts = JSON.parseObject(cartString);
+            Map<String, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
+            List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(cartsMap.keySet()));
+            result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("goods", goods),
+                    new ExtraDTO("carts", new ArrayList<>(cartsMap.values())),
+                    new ExtraDTO("orders", orderRepository.findByUserId(data.getUserId()))));
+        } else {
+            result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("orders", orderRepository.findByUserId(data.getUserId()))));
+        }
         data.setCartInfo(null);
         result.setResult(data);
         return result;
@@ -101,9 +112,8 @@ public class UserServiceImpl implements UserService {
         }
         if (!StringUtil.isNullOrEmpty(vo.getUserName())) {
             user.setUserName(vo.getUserName());
-        }
-        if (!StringUtil.isNullOrEmpty(vo.getDeliveryInfo())) {
-            user.setDeliveryInfo(vo.getDeliveryInfo());
+        } else {
+            user.setUserName("微信用户" + openId.substring(3, 6));
         }
         UserEntity entity = userRepository.saveAndFlush(user);
         UserDTO data = new UserDTO();
@@ -123,9 +133,6 @@ public class UserServiceImpl implements UserService {
             if (!StringUtil.isNullOrEmpty(vo.getUserName())) {
                 user.setUserName(vo.getUserName());
             }
-            if (!StringUtil.isNullOrEmpty(vo.getDeliveryInfo())) {
-                user.setDeliveryInfo(vo.getDeliveryInfo());
-            }
             UserEntity entity = userRepository.saveAndFlush(user);
             UserDTO data = new UserDTO();
             BeanUtils.copyProperties(entity, data);
@@ -133,6 +140,56 @@ public class UserServiceImpl implements UserService {
             result.setMessage("更新成功");
         } else {
             throw new Exception("userId 不能为空，请确认参数是否完备");
+        }
+        return result;
+    }
+
+    @Override
+    public CommonDTO<AddressEntity> addAddress(AddressNewVO vo) {
+        CommonDTO<AddressEntity> result = new CommonDTO<>();
+        AddressEntity entity = new AddressEntity(vo);
+        result.setResult(addressRepository.saveAndFlush(entity));
+        return result;
+    }
+
+    @Override
+    public CommonDTO<AddressEntity> getAddressInfo(String addressId) {
+        CommonDTO<AddressEntity> result = new CommonDTO<>();
+        result.setResult(addressRepository.findById(addressId).get());
+        return result;
+    }
+
+    @Override
+    public CommonDTO<AddressEntity> updateAddress(AddressVO vo) throws Exception {
+        CommonDTO<AddressEntity> result = new CommonDTO<>();
+        if (StringUtil.isNotNullOrEmpty(vo.getAddressId())) {
+            AddressEntity entity = addressRepository.findById(vo.getAddressId()).get();
+            if (StringUtil.isNotNullOrEmpty(vo.getContact())) {
+                entity.setContact(vo.getContact());
+            }
+            if (StringUtil.isNotNullOrEmpty(vo.getContactName())) {
+                entity.setContactName(vo.getContactName());
+            }
+            if (StringUtil.isNotNullOrEmpty(vo.getContactAddress())) {
+                entity.setContactAddress(vo.getContactAddress());
+            }
+            result.setResult(addressRepository.saveAndFlush(entity));
+        } else {
+            StringUtil.throwExceptionInfo("地址信息ID不能为空");
+        }
+        return result;
+    }
+
+    @Override
+    public CommonDTO<AddressEntity> deleteAddress(AddressVO vo) throws Exception {
+        CommonDTO<AddressEntity> result = new CommonDTO<>();
+        if (vo.getDeleteAddressIds() != null && vo.getDeleteAddressIds().size() > 0) {
+            vo.getDeleteAddressIds().forEach(id -> {
+                addressRepository.deleteById(id);
+            });
+            result.setMessage("删除成功");
+        } else {
+            StringUtil.throwExceptionInfo("地址信息id集合deleteAddressIds不能为空");
         }
         return result;
     }

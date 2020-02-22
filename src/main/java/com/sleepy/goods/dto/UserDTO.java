@@ -20,12 +20,6 @@ public class UserDTO {
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "delivery_info")
-    private String deliveryInfo;
-
     @Column(name = "cart_info", columnDefinition = "text")
     private String cartInfo;
-
-    @Column(name = "order_list", columnDefinition = "text")
-    private String orderList;
 }

@@ -6,10 +6,14 @@ import com.sleepy.goods.entity.OrderEntity;
 import com.sleepy.goods.service.OrderService;
 import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.OrderVO;
+import com.sleepy.goods.vo.order.OrderNewVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * 订单控制器 Controller
@@ -39,7 +43,7 @@ public class OrderController {
 
     @ApiOperation("保存订单")
     @PostMapping("/order/save")
-    public CommonDTO<OrderEntity> saveOrder(@RequestBody OrderVO vo) throws Exception {
+    public CommonDTO<OrderEntity> saveOrder(@RequestBody @Valid OrderNewVO vo, BindingResult bindingResult) throws Exception {
         return orderService.saveOrder(vo);
     }
 

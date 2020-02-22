@@ -2,7 +2,10 @@ package com.sleepy.goods.service;
 
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.dto.UserDTO;
-import com.sleepy.goods.vo.UserVO;
+import com.sleepy.goods.entity.AddressEntity;
+import com.sleepy.goods.vo.user.AddressNewVO;
+import com.sleepy.goods.vo.user.AddressVO;
+import com.sleepy.goods.vo.user.UserVO;
 
 /**
  * 用户Service
@@ -20,4 +23,11 @@ public interface UserService {
 
     CommonDTO<UserDTO> updateUser(UserVO vo) throws Exception;
 
+    CommonDTO<AddressEntity> addAddress(AddressNewVO vo);
+
+    CommonDTO<AddressEntity> getAddressInfo(String addressId);
+
+    CommonDTO<AddressEntity> updateAddress(AddressVO vo) throws Exception;
+
+    CommonDTO<AddressEntity> deleteAddress(AddressVO vo) throws Exception;
 }
