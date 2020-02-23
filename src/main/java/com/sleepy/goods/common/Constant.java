@@ -38,4 +38,14 @@ public class Constant {
 
     // 字符串中属性分隔符号
     public static final String PROPERTY_SPLIT_SYMBOL = ":";
+
+    // 订单相关常量
+    public static final int DELIVERY_STATUS_DEFAULT = 0;
+    public static final int DELIVERY_STATUS_DELIVERING = 1;
+    public static final int DELIVERY_STATUS_SUCCESS = 2;
+
+    public static final int PAY_STATUS_DEFAULT = 0;
+    public static final int PAY_STATUS_DELIVERING = 1;
+    public static final int PAY_STATUS_SUCCESS = 2;
+
 }

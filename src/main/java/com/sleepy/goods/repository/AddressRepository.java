@@ -14,4 +14,6 @@ import java.util.List;
 
 public interface AddressRepository extends JpaRepository<AddressEntity, String> {
     List<AddressEntity> findAllByAddressIdIn(List<String> ids);
+
+    List<AddressEntity> findAllByUserId(String userId);
 }

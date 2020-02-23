@@ -6,6 +6,7 @@ import com.sleepy.goods.common.Constant;
 import com.sleepy.goods.dto.CartDTO;
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.dto.ExtraDTO;
+import com.sleepy.goods.dto.SettlementDTO;
 import com.sleepy.goods.entity.AddressEntity;
 import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.entity.OrderEntity;
@@ -18,6 +19,7 @@ import com.sleepy.goods.service.OrderService;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.OrderVO;
+import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,17 +58,39 @@ public class OrderServiceImpl implements OrderService {
     public CommonDTO<OrderEntity> saveOrder(OrderNewVO vo) throws Exception {
         CommonDTO<OrderEntity> result = new CommonDTO<>();
         OrderEntity entity = new OrderEntity(vo);
-        String[] goodsArray = vo.getGoods().split(Constant.COMMA);
-        if (goodsArray.length > 0) {
+        UserEntity user = userRepository.findByUserId(vo.getUserId()).get();
+        JSONObject carts = JSON.parseObject(user.getCartInfo());
+        if (vo.getGoodsIds().size() > 0) {
+            StringBuilder goodsString = new StringBuilder();
             double goodsTotalPrice = 0;
-            for (String goods : goodsArray) {
-                String[] info = goods.split(":");
-                goodsTotalPrice += Integer.parseInt(info[1]) * Double.parseDouble(info[2]);
+            Map<String, GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(vo.getGoodsIds()).stream().collect(Collectors.toMap(GoodsEntity::getGoodsId, p -> p));
+            for (String goodsId : vo.getGoodsIds()) {
+                JSONObject item = carts.getJSONObject(goodsId);
+                if (vo.getSettlementTime().compareTo(goods.get(goodsId).getUpdateTime()) > 0) {
+                    goodsTotalPrice += item.getIntValue("selectedNum") * goods.get(goodsId).getGoodsPriceNow();
+
+                    goodsString.append(StringUtil.getSplitString(Constant.PROPERTY_SPLIT_SYMBOL,
+                            goodsId,
+                            String.valueOf(item.getIntValue("selectedNum")),
+                            String.valueOf(goods.get(goodsId).getGoodsPriceNow()),
+                            ""));
+                    goodsString.append(Constant.COMMA);
+                    carts.remove(goodsId);
+                } else {
+                    StringUtil.throwExceptionInfo("商品数据变化，请重新确认订单信息");
+                }
             }
+            if (StringUtil.isNotNullOrEmpty(vo.getComment())) {
+                entity.setComment(vo.getComment());
+            }
+            entity.setGoods(goodsString.substring(0, goodsString.length() - 1));
             entity.setGoodsTotalPrice(goodsTotalPrice);
             entity.setTotalPrice(goodsTotalPrice);
             entity.setOrderTime(StringUtil.getDateString(new Date()));
             result.setResult(orderRepository.saveAndFlush(entity));
+
+            user.setCartInfo(JSON.toJSONString(carts));
+            userRepository.saveAndFlush(user);
         } else {
             StringUtil.throwExceptionInfo("订单商品不能为空");
         }
@@ -161,6 +185,29 @@ public class OrderServiceImpl implements OrderService {
             List<OrderEntity> data = orderRepository.findAllByOrderByOrderTimeDesc();
             return getOrderDetailResult(data);
         }
+    }
+
+    @Override
+    public CommonDTO<SettlementDTO> settlement(CartSettlementVO vo) throws Exception {
+        CommonDTO<SettlementDTO> result = new CommonDTO<>();
+        Double totalPrice, goodsTotalPrice = 0d;
+        if (vo.getGoods().size() > 0) {
+            List<GoodsEntity> goodsList = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(vo.getGoods().keySet()));
+            for (GoodsEntity goods : goodsList) {
+                goodsTotalPrice += vo.getGoods().get(goods.getGoodsId()) * goods.getGoodsPriceNow();
+            }
+            totalPrice = goodsTotalPrice;
+            SettlementDTO data = new SettlementDTO();
+            data.setTotalPrice(StringUtil.formatPriceNum(totalPrice));
+            data.setGoodsTotalPrice(StringUtil.formatPriceNum(goodsTotalPrice));
+            data.setCouponPrice(StringUtil.formatPriceNum(0d));
+            data.setDeliveryPrice(StringUtil.formatPriceNum(0d));
+            result.setResult(data);
+            result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("settlementTime", StringUtil.getDateString(new Date()))));
+        } else {
+            StringUtil.throwExceptionInfo("购物车结算商品数据goods不能为空");
+        }
+        return result;
     }
 
     private CommonDTO<OrderEntity> getOrderDetailResult(List<OrderEntity> data) {

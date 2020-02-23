@@ -2,10 +2,12 @@ package com.sleepy.goods.controller;
 
 import com.sleepy.goods.dto.CartDTO;
 import com.sleepy.goods.dto.CommonDTO;
+import com.sleepy.goods.dto.SettlementDTO;
 import com.sleepy.goods.entity.OrderEntity;
 import com.sleepy.goods.service.OrderService;
 import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.OrderVO;
+import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +47,12 @@ public class OrderController {
     @PostMapping("/order/save")
     public CommonDTO<OrderEntity> saveOrder(@RequestBody @Valid OrderNewVO vo, BindingResult bindingResult) throws Exception {
         return orderService.saveOrder(vo);
+    }
+
+    @ApiOperation("购物车结算")
+    @PostMapping("/cart/settlement")
+    public CommonDTO<SettlementDTO> settlement(@RequestBody @Valid CartSettlementVO vo) throws Exception {
+        return orderService.settlement(vo);
     }
 
     @ApiOperation("获取指定用户购物车列表")

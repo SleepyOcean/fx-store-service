@@ -49,6 +49,9 @@ public class GoodsEntity {
     @Column(name = "goods_price_now", columnDefinition = "DOUBLE(10,2) NOT NULL COMMENT '商品现价'")
     private Double goodsPriceNow;
 
+    @Column(name = "update_time", columnDefinition = "VARCHAR(32) COMMENT '商品信息最新更新时间'")
+    private String updateTime;
+
     public GoodsEntity(GoodsNewVO vo) {
         this.goodsName = vo.getGoodsName();
         this.category = vo.getCategory();

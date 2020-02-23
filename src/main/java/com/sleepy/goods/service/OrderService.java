@@ -2,9 +2,11 @@ package com.sleepy.goods.service;
 
 import com.sleepy.goods.dto.CartDTO;
 import com.sleepy.goods.dto.CommonDTO;
+import com.sleepy.goods.dto.SettlementDTO;
 import com.sleepy.goods.entity.OrderEntity;
 import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.OrderVO;
+import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
 
 /**
@@ -23,4 +25,6 @@ public interface OrderService {
     CommonDTO<CartDTO> deleteGoodsInCart(CartVO vo);
 
     CommonDTO<OrderEntity> getOrderListByCond(OrderVO vo);
+
+    CommonDTO<SettlementDTO> settlement(CartSettlementVO vo) throws Exception;
 }

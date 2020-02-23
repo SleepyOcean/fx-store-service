@@ -16,6 +16,7 @@ import com.sleepy.goods.repository.UserRepository;
 import com.sleepy.goods.service.UserService;
 import com.sleepy.goods.util.HttpUtil;
 import com.sleepy.goods.util.StringUtil;
+import com.sleepy.goods.vo.user.AddressDelVO;
 import com.sleepy.goods.vo.user.AddressNewVO;
 import com.sleepy.goods.vo.user.AddressVO;
 import com.sleepy.goods.vo.user.UserVO;
@@ -153,9 +154,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonDTO<AddressEntity> getAddressInfo(String addressId) {
+    public CommonDTO<AddressEntity> getAddressInfo(String addressId, String userId) throws Exception {
         CommonDTO<AddressEntity> result = new CommonDTO<>();
-        result.setResult(addressRepository.findById(addressId).get());
+        AddressEntity entity = addressRepository.findById(addressId).get();
+        if (entity.getUserId().equals(userId)) {
+            result.setResult(entity);
+        } else {
+            StringUtil.throwExceptionInfo("userId与地址信息不匹配");
+        }
+        return result;
+    }
+
+    @Override
+    public CommonDTO<AddressEntity> getAddressInfoByUserId(String userId) {
+        CommonDTO<AddressEntity> result = new CommonDTO<>();
+        result.setResultList(addressRepository.findAllByUserId(userId));
+        result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("defaultAddressId", userRepository.findByUserId(userId).get().getDefaultAddressId())));
+        return result;
+    }
+
+    @Override
+    public CommonDTO<AddressEntity> setDefaultAddress(String addressId, String userId) {
+        CommonDTO<AddressEntity> result = new CommonDTO<>();
+        UserEntity entity = userRepository.findByUserId(userId).get();
+        entity.setDefaultAddressId(addressId);
+        userRepository.saveAndFlush(entity);
         return result;
     }
 
@@ -181,13 +204,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonDTO<AddressEntity> deleteAddress(AddressVO vo) throws Exception {
+    public CommonDTO<AddressEntity> deleteAddress(AddressDelVO vo) throws Exception {
         CommonDTO<AddressEntity> result = new CommonDTO<>();
+        UserEntity userEntity = userRepository.findByUserId(vo.getUserId()).get();
+        StringBuilder message = new StringBuilder();
         if (vo.getDeleteAddressIds() != null && vo.getDeleteAddressIds().size() > 0) {
-            vo.getDeleteAddressIds().forEach(id -> {
-                addressRepository.deleteById(id);
+            if (StringUtil.isNotNullOrEmpty(vo.getDefaultAddressId())) {
+                userEntity.setDefaultAddressId(vo.getDefaultAddressId());
+                userRepository.saveAndFlush(userEntity);
+            }
+            addressRepository.findAllByAddressIdIn(vo.getDeleteAddressIds()).forEach(address -> {
+                if (vo.getUserId().equals(address.getUserId())) {
+                    addressRepository.delete(address);
+                } else {
+                    if (message.length() > 0) {
+                        message.append(address.getAddressId() + " ");
+                    } else {
+                        message.append("，警告：地址id集合中包含非此用户的地址id：");
+                    }
+                }
             });
-            result.setMessage("删除成功");
+            result.setMessage("删除成功" + message.toString());
         } else {
             StringUtil.throwExceptionInfo("地址信息id集合deleteAddressIds不能为空");
         }

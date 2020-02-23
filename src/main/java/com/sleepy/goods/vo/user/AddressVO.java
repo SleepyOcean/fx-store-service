@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.List;
+import javax.validation.constraints.NotEmpty;
 
 /**
  * 地址VO
@@ -13,16 +13,15 @@ import java.util.List;
  * @create 2020-02-22 13:33
  **/
 @Data
-@ApiModel("地址新增VO")
+@ApiModel("地址VO")
 public class AddressVO {
 
-    @ApiModelProperty("待删除的地址信息ID集合")
-    private List<String> deleteAddressIds;
-
     @ApiModelProperty("地址信息ID")
+    @NotEmpty(message = "addressId不能为空")
     private String addressId;
 
     @ApiModelProperty("用户ID")
+    @NotEmpty(message = "userId不能为空")
     private String userId;
 
     @ApiModelProperty("收货人联系方式contact")

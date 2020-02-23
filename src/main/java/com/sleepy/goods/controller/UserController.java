@@ -5,6 +5,7 @@ import com.sleepy.goods.dto.UserDTO;
 import com.sleepy.goods.entity.AddressEntity;
 import com.sleepy.goods.service.UserService;
 import com.sleepy.goods.util.StringUtil;
+import com.sleepy.goods.vo.user.AddressDelVO;
 import com.sleepy.goods.vo.user.AddressNewVO;
 import com.sleepy.goods.vo.user.AddressVO;
 import com.sleepy.goods.vo.user.UserVO;
@@ -69,12 +70,21 @@ public class UserController {
     }
 
     @PostMapping("/address/delete")
-    public CommonDTO<AddressEntity> deleteAddress(@RequestBody AddressVO vo) throws Exception {
+    public CommonDTO<AddressEntity> deleteAddress(@RequestBody @Valid AddressDelVO vo) throws Exception {
         return userService.deleteAddress(vo);
     }
 
+    @PostMapping("/address/setDefault")
+    public CommonDTO<AddressEntity> setDefaultAddress(@RequestBody @Valid AddressVO vo) throws Exception {
+        return userService.setDefaultAddress(vo.getAddressId(), vo.getUserId());
+    }
+
     @GetMapping("/address/get")
-    public CommonDTO<AddressEntity> getAddressInfo(@RequestParam("addressId") String addressId) throws Exception {
-        return userService.getAddressInfo(addressId);
+    public CommonDTO<AddressEntity> getAddressInfo(@RequestParam(value = "userId") String userId, @RequestParam(value = "addressId", required = false) String addressId) throws Exception {
+        if (StringUtil.isNotNullOrEmpty(addressId)) {
+            return userService.getAddressInfo(addressId, userId);
+        } else {
+            return userService.getAddressInfoByUserId(userId);
+        }
     }
 }

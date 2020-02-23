@@ -201,4 +201,17 @@ public class StringUtil {
         }
         return extra;
     }
+
+    public static Double formatPriceNum(double price) {
+        return new BigDecimal(price).setScale(2, BigDecimal.ROUND_DOWN).doubleValue();
+    }
+
+    public static String getSplitString(String splitSymbol, String... strings) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < strings.length; i++) {
+            sb.append(strings[i]);
+            sb.append(splitSymbol);
+        }
+        return sb.substring(0, sb.length() - 1);
+    }
 }

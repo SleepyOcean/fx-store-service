@@ -10,6 +10,7 @@ import com.sleepy.goods.vo.goods.GoodsNewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +46,7 @@ public class GoodsServiceImpl implements GoodsService {
         if (vo.getGoodsPriceVip() != null) {
             good.setGoodsPriceVip(vo.getGoodsPriceVip());
         }
+        good.setUpdateTime(StringUtil.getDateString(new Date()));
         goodsRepository.save(good);
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
         result.setMessage("创建成功");

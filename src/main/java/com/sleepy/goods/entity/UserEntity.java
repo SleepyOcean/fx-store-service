@@ -25,6 +25,9 @@ public class UserEntity {
     @Column(name = "user_name", columnDefinition = "VARCHAR(64) NOT NULL COMMENT '用户名称'")
     private String userName;
 
-    @Column(name = "cart_info", columnDefinition = "text COMMENT '购物车信息： 商品id:商品数量，多个以逗号分隔'")
+    @Column(name = "cart_info", columnDefinition = "text COMMENT '购物车信息：{goodsId: {goodsId, selectedNum} ...}'")
     private String cartInfo;
+
+    @Column(name = "default_address_id", columnDefinition = "VARCHAR(64) COMMENT '默认地址id'")
+    private String defaultAddressId;
 }

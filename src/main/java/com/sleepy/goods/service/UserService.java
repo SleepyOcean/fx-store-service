@@ -3,6 +3,7 @@ package com.sleepy.goods.service;
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.dto.UserDTO;
 import com.sleepy.goods.entity.AddressEntity;
+import com.sleepy.goods.vo.user.AddressDelVO;
 import com.sleepy.goods.vo.user.AddressNewVO;
 import com.sleepy.goods.vo.user.AddressVO;
 import com.sleepy.goods.vo.user.UserVO;
@@ -25,9 +26,14 @@ public interface UserService {
 
     CommonDTO<AddressEntity> addAddress(AddressNewVO vo);
 
-    CommonDTO<AddressEntity> getAddressInfo(String addressId);
+    CommonDTO<AddressEntity> getAddressInfo(String addressId, String userId) throws Exception;
+
+    CommonDTO<AddressEntity> getAddressInfoByUserId(String userId);
+
+    CommonDTO<AddressEntity> setDefaultAddress(String addressId, String userId);
 
     CommonDTO<AddressEntity> updateAddress(AddressVO vo) throws Exception;
 
-    CommonDTO<AddressEntity> deleteAddress(AddressVO vo) throws Exception;
+    CommonDTO<AddressEntity> deleteAddress(AddressDelVO vo) throws Exception;
+
 }
