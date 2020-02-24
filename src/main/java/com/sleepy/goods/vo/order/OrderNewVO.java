@@ -40,6 +40,7 @@ public class OrderNewVO {
     @ApiModelProperty("付款状态，0未支付，1已支付")
     private Integer payStatus;
 
+    @NotNull(message = "付款方式payWay不能为空，0货到付款，1支付宝，2微信支付")
     @Range(min = 0, max = 2, message = "付款方式payWay的值为0、1或2，0货到付款，1支付宝，2微信支付")
     @ApiModelProperty("付款方式，0货到付款，1支付宝，2微信支付")
     private Integer payWay;

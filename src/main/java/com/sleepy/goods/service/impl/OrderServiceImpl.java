@@ -3,10 +3,7 @@ package com.sleepy.goods.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sleepy.goods.common.Constant;
-import com.sleepy.goods.dto.CartDTO;
-import com.sleepy.goods.dto.CommonDTO;
-import com.sleepy.goods.dto.ExtraDTO;
-import com.sleepy.goods.dto.SettlementDTO;
+import com.sleepy.goods.dto.*;
 import com.sleepy.goods.entity.AddressEntity;
 import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.entity.OrderEntity;
@@ -59,6 +56,9 @@ public class OrderServiceImpl implements OrderService {
         CommonDTO<OrderEntity> result = new CommonDTO<>();
         OrderEntity entity = new OrderEntity(vo);
         UserEntity user = userRepository.findByUserId(vo.getUserId()).get();
+        if (StringUtil.isNullOrEmpty(user.getCartInfo())) {
+            StringUtil.throwExceptionInfo("购物车为空!");
+        }
         JSONObject carts = JSON.parseObject(user.getCartInfo());
         if (vo.getGoodsIds().size() > 0) {
             StringBuilder goodsString = new StringBuilder();
@@ -191,10 +191,17 @@ public class OrderServiceImpl implements OrderService {
     public CommonDTO<SettlementDTO> settlement(CartSettlementVO vo) throws Exception {
         CommonDTO<SettlementDTO> result = new CommonDTO<>();
         Double totalPrice, goodsTotalPrice = 0d;
+        Map<String, SettlementGoodsPriceDTO> goodsPriceMap = new HashMap<>(vo.getGoods().size());
         if (vo.getGoods().size() > 0) {
             List<GoodsEntity> goodsList = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(vo.getGoods().keySet()));
             for (GoodsEntity goods : goodsList) {
-                goodsTotalPrice += vo.getGoods().get(goods.getGoodsId()) * goods.getGoodsPriceNow();
+                SettlementGoodsPriceDTO price = new SettlementGoodsPriceDTO();
+                price.setGoodsId(goods.getGoodsId());
+                price.setPriceNow(goods.getGoodsPriceNow());
+                price.setAmount(vo.getGoods().get(goods.getGoodsId()));
+                price.setTotalPrice(vo.getGoods().get(goods.getGoodsId()) * goods.getGoodsPriceNow());
+                goodsPriceMap.put(goods.getGoodsId(), price);
+                goodsTotalPrice += price.getTotalPrice();
             }
             totalPrice = goodsTotalPrice;
             SettlementDTO data = new SettlementDTO();
@@ -203,7 +210,8 @@ public class OrderServiceImpl implements OrderService {
             data.setCouponPrice(StringUtil.formatPriceNum(0d));
             data.setDeliveryPrice(StringUtil.formatPriceNum(0d));
             result.setResult(data);
-            result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("settlementTime", StringUtil.getDateString(new Date()))));
+            result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("settlementTime", StringUtil.getDateString(new Date())),
+                    new ExtraDTO("settlementDetail", goodsPriceMap)));
         } else {
             StringUtil.throwExceptionInfo("购物车结算商品数据goods不能为空");
         }

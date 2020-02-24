@@ -68,6 +68,7 @@ public class ControllerInterceptor {
             result.setMessage("查询结果为空：" + e.getMessage());
             log.warn("数据库请求结果为空：" + e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             result.setStatus(503);
             result.setMessage(e.getMessage());
             log.error("serviceImpl异常：" + e.getMessage());
