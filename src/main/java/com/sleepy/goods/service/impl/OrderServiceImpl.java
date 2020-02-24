@@ -78,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
                     goodsString.append(StringUtil.getSplitString(Constant.PROPERTY_SPLIT_SYMBOL,
                             goodsId,
                             String.valueOf(item.getIntValue("selectedNum")),
-                            String.valueOf(goods.get(goodsId).getGoodsPriceNow()),
+                            String.valueOf(item.getIntValue("selectedNum") * goods.get(goodsId).getGoodsPriceNow()),
                             ""));
                     goodsString.append(Constant.COMMA);
                     carts.remove(goodsId);
