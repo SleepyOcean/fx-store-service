@@ -14,7 +14,9 @@ import com.sleepy.goods.vo.order.OrderNewVO;
  * @create 2020/2/14 20:23
  */
 public interface OrderService {
-    CommonDTO<OrderEntity> getOrderList(String userId);
+    CommonDTO<OrderEntity> getOrderListByUserId(String userId);
+
+    CommonDTO<OrderEntity> getOrderByOrderId(String orderId);
 
     CommonDTO<OrderEntity> saveOrder(OrderNewVO vo) throws Exception;
 
@@ -27,4 +29,5 @@ public interface OrderService {
     CommonDTO<OrderEntity> getOrderListByCond(OrderVO vo);
 
     CommonDTO<SettlementDTO> settlement(CartSettlementVO vo) throws Exception;
+
 }

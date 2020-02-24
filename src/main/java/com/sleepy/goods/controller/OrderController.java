@@ -38,9 +38,15 @@ public class OrderController {
     }
 
     @ApiOperation("获取指定用户订单列表")
-    @GetMapping("/order/get")
-    public CommonDTO<OrderEntity> getOrder(@RequestParam("userId") String userId) {
-        return orderService.getOrderList(userId);
+    @GetMapping("/order/getByUserId")
+    public CommonDTO<OrderEntity> getOrderByUserId(@RequestParam("userId") String userId) {
+        return orderService.getOrderListByUserId(userId);
+    }
+
+    @ApiOperation("获取指定用户订单列表")
+    @GetMapping("/order/getByOrderId")
+    public CommonDTO<OrderEntity> getOrderByOrderId(@RequestParam("orderId") String orderId) {
+        return orderService.getOrderByOrderId(orderId);
     }
 
     @ApiOperation("保存订单")

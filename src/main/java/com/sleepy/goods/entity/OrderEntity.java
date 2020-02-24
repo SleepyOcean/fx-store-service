@@ -62,7 +62,7 @@ public class OrderEntity {
     @Column(name = "delivery_way", columnDefinition = "TINYINT NOT NULL COMMENT '配送方式，0商家配送，1自提'")
     private Integer deliveryWay;
 
-    @Column(name = "delivery_status", columnDefinition = "TINYINT DEFAULT 0 COMMENT '订单状态，0已下单，1配送中，2配送完成，3退款中'")
+    @Column(name = "delivery_status", columnDefinition = "TINYINT DEFAULT 0 COMMENT '订单状态，0待配送，1配送中，2配送完成，3退款中'")
     private Integer deliveryStatus = 0;
 
     @Column(name = "delivery_man_info", columnDefinition = "VARCHAR(64) COMMENT '配送人信息，手机号:配送人姓名'")

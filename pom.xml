@@ -110,7 +110,7 @@
             <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
         </repository>
         <repository>
-            <id>sleepyocean</id>
+            <id>oceanmaven</id>
             <name>ocean maven</name>
             <url>http://nexus.sleepyocean.cn:8050/repository/maven-ocean/</url>
         </repository>
