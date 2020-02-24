@@ -149,7 +149,13 @@ public class UserServiceImpl implements UserService {
     public CommonDTO<AddressEntity> addAddress(AddressNewVO vo) {
         CommonDTO<AddressEntity> result = new CommonDTO<>();
         AddressEntity entity = new AddressEntity(vo);
-        result.setResult(addressRepository.saveAndFlush(entity));
+        UserEntity user = userRepository.findByUserId(vo.getUserId()).get();
+        entity = addressRepository.saveAndFlush(entity);
+        if (StringUtil.isNullOrEmpty(user.getDefaultAddressId())) {
+            user.setDefaultAddressId(entity.getAddressId());
+            userRepository.saveAndFlush(user);
+        }
+        result.setResult(entity);
         return result;
     }
 

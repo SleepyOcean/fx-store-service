@@ -8,6 +8,8 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 
+import java.util.NoSuchElementException;
+
 /**
  * controller方法拦截器
  *
@@ -60,8 +62,12 @@ public class ControllerInterceptor {
             result = (CommonDTO<Object>) point.proceed();
             result.setStatus(200);
             result.setTimeout((double) (System.currentTimeMillis() - startTime) / 1000);
-        } catch (Exception e) {
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
+            result.setStatus(200);
+            result.setMessage("查询结果为空：" + e.getMessage());
+            log.warn("数据库请求结果为空：" + e.getMessage());
+        } catch (Exception e) {
             result.setStatus(503);
             result.setMessage(e.getMessage());
             log.error("serviceImpl异常：" + e.getMessage());

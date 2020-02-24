@@ -17,7 +17,6 @@ import java.util.Map;
 @ApiModel("购物车结算VO")
 public class CartSettlementVO {
 
-    @NotEmpty(message = "addressId不能为空")
     private String addressId;
 
     @NotEmpty(message = "userId不能为空")
