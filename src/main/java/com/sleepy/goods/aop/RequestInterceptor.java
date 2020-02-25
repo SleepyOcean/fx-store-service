@@ -1,5 +1,6 @@
 package com.sleepy.goods.aop;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sleepy.goods.config.RequestWrapper;
 import com.sleepy.goods.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +22,10 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String uuid = StringUtil.getRandomUuid("");
+        String params = (null != request.getParameterMap() && request.getParameterMap().size() > 0) ? JSONObject.toJSONString(request.getParameterMap()) : new RequestWrapper(request).getBody();
+
         log.info(String.format("Request[%s] IP:[%s] URL:[%s], Protocol:[%s], Params:%s",
-                uuid, getIpAddr(request), request.getRequestURL(), request.getProtocol(), new RequestWrapper(request).getBody()));
+                uuid, getIpAddr(request), request.getRequestURL(), request.getProtocol(), params));
         request.setAttribute("startTime", System.currentTimeMillis());
         request.setAttribute("uuid", uuid);
         return super.preHandle(request, response, handler);

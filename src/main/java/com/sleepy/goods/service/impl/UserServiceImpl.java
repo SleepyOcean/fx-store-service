@@ -230,6 +230,11 @@ public class UserServiceImpl implements UserService {
                     }
                 }
             });
+            List<AddressEntity> addressEntities = addressRepository.findAllByUserId(vo.getUserId());
+            if (null == addressEntities || addressEntities.size() < 1) {
+                userEntity.setDefaultAddressId("");
+                userRepository.saveAndFlush(userEntity);
+            }
             result.setMessage("删除成功" + message.toString());
         } else {
             StringUtil.throwExceptionInfo("地址信息id集合deleteAddressIds不能为空");

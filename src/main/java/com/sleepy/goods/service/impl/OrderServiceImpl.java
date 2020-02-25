@@ -199,7 +199,7 @@ public class OrderServiceImpl implements OrderService {
                 price.setGoodsId(goods.getGoodsId());
                 price.setPriceNow(goods.getGoodsPriceNow());
                 price.setAmount(vo.getGoods().get(goods.getGoodsId()));
-                price.setTotalPrice(vo.getGoods().get(goods.getGoodsId()) * goods.getGoodsPriceNow());
+                price.setTotalPrice(StringUtil.formatPriceNum(vo.getGoods().get(goods.getGoodsId()) * goods.getGoodsPriceNow()));
                 goodsPriceMap.put(goods.getGoodsId(), price);
                 goodsTotalPrice += price.getTotalPrice();
             }
