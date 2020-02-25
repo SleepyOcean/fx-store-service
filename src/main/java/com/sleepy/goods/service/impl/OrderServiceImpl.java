@@ -46,8 +46,14 @@ public class OrderServiceImpl implements OrderService {
     AddressRepository addressRepository;
 
     @Override
-    public CommonDTO<OrderEntity> getOrderList(String userId) {
+    public CommonDTO<OrderEntity> getOrderListByUserId(String userId) {
         List<OrderEntity> data = orderRepository.findByUserId(userId);
+        return getOrderDetailResult(data);
+    }
+
+    @Override
+    public CommonDTO<OrderEntity> getOrderByOrderId(String orderId) {
+        List<OrderEntity> data = Arrays.asList(orderRepository.findById(orderId).get());
         return getOrderDetailResult(data);
     }
 
@@ -72,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
                     goodsString.append(StringUtil.getSplitString(Constant.PROPERTY_SPLIT_SYMBOL,
                             goodsId,
                             String.valueOf(item.getIntValue("selectedNum")),
-                            String.valueOf(goods.get(goodsId).getGoodsPriceNow()),
+                            String.valueOf(item.getIntValue("selectedNum") * goods.get(goodsId).getGoodsPriceNow()),
                             ""));
                     goodsString.append(Constant.COMMA);
                     carts.remove(goodsId);

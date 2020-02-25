@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.sleepy</groupId>
             <artifactId>so-jpql-core</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0-RELEASE</version>
         </dependency>
 
         <dependency>
@@ -108,6 +108,11 @@
             <id>alibab</id>
             <name>alibaba</name>
             <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>oceanmaven</id>
+            <name>ocean maven</name>
+            <url>http://nexus.sleepyocean.cn:8050/repository/maven-ocean/</url>
         </repository>
     </repositories>
 

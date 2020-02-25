@@ -50,8 +50,8 @@ public class OrderNewVO {
     @ApiModelProperty("配送方式，0商家配送，1自提")
     private Integer deliveryWay;
 
-    @Range(min = 0, max = 2, message = "订单状态deliveryStatus的值为0、1或2，0已下单，1配送中，2配送完成")
-    @ApiModelProperty("订单状态，0接单，1配送中，2配送完成")
+    @Range(min = 0, max = 2, message = "订单状态deliveryStatus的值为0、1或2，0待配送，1配送中，2配送完成")
+    @ApiModelProperty("订单状态，0待配送，1配送中，2配送完成")
     private Integer deliveryStatus;
 
     @Pattern(regexp = "[0-9]+:[\\u4e00-\\u9fa5]+", message = "配送人信息deliveryManInfo必须符合格式, 格式为 -> 手机号:配送人姓名")
