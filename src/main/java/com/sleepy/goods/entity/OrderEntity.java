@@ -38,8 +38,14 @@ public class OrderEntity {
     @Column(name = "total_price", columnDefinition = "DOUBLE(10,2) NOT NULL COMMENT '实付款 = 商品金额 + 配送费 - 优惠券'")
     private Double totalPrice;
 
-    @Column(name = "address_id", columnDefinition = "VARCHAR(64) NOT NULL COMMENT '配送地址id'")
-    private String addressId;
+    @Column(name = "contact", columnDefinition = "VARCHAR(32) NOT NULL COMMENT '收货人联系方式'")
+    private String contact;
+
+    @Column(name = "contact_name", columnDefinition = "VARCHAR(64) NOT NULL COMMENT '收货人姓名'")
+    private String contactName;
+
+    @Column(name = "contact_address", columnDefinition = "VARCHAR(256) NOT NULL COMMENT '收货人详细地址'")
+    private String contactAddress;
 
     @Column(name = "order_Time", columnDefinition = "VARCHAR(32) NOT NULL COMMENT '下单时间'")
     private String orderTime;
@@ -74,9 +80,11 @@ public class OrderEntity {
     public OrderEntity() {
     }
 
-    public OrderEntity(OrderNewVO vo) {
+    public OrderEntity(OrderNewVO vo, AddressEntity entity) {
         this.userId = vo.getUserId();
-        this.addressId = vo.getAddressId();
+        this.contactAddress = entity.getContactAddress();
+        this.contactName = entity.getContactName();
+        this.contact = entity.getContact();
         this.payWay = vo.getPayWay();
         this.deliveryWay = vo.getDeliveryWay();
     }

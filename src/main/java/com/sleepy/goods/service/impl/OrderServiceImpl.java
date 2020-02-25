@@ -13,6 +13,7 @@ import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.repository.OrderRepository;
 import com.sleepy.goods.repository.UserRepository;
 import com.sleepy.goods.service.OrderService;
+import com.sleepy.goods.util.HPCalcUtil;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.OrderVO;
@@ -60,7 +61,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public CommonDTO<OrderEntity> saveOrder(OrderNewVO vo) throws Exception {
         CommonDTO<OrderEntity> result = new CommonDTO<>();
-        OrderEntity entity = new OrderEntity(vo);
+        AddressEntity addressEntity = addressRepository.findById(vo.getAddressId()).get();
+        OrderEntity entity = new OrderEntity(vo, addressEntity);
         UserEntity user = userRepository.findByUserId(vo.getUserId()).get();
         if (StringUtil.isNullOrEmpty(user.getCartInfo())) {
             StringUtil.throwExceptionInfo("购物车为空!");
@@ -73,12 +75,12 @@ public class OrderServiceImpl implements OrderService {
             for (String goodsId : vo.getGoodsIds()) {
                 JSONObject item = carts.getJSONObject(goodsId);
                 if (vo.getSettlementTime().compareTo(goods.get(goodsId).getUpdateTime()) > 0) {
-                    goodsTotalPrice += item.getIntValue("selectedNum") * goods.get(goodsId).getGoodsPriceNow();
+                    goodsTotalPrice = HPCalcUtil.add(goodsTotalPrice, HPCalcUtil.mul(item.getIntValue("selectedNum"), goods.get(goodsId).getGoodsPriceNow()));
 
                     goodsString.append(StringUtil.getSplitString(Constant.PROPERTY_SPLIT_SYMBOL,
                             goodsId,
                             String.valueOf(item.getIntValue("selectedNum")),
-                            String.valueOf(item.getIntValue("selectedNum") * goods.get(goodsId).getGoodsPriceNow()),
+                            String.valueOf(HPCalcUtil.mul(item.getIntValue("selectedNum"), goods.get(goodsId).getGoodsPriceNow())),
                             ""));
                     goodsString.append(Constant.COMMA);
                     carts.remove(goodsId);
@@ -205,9 +207,9 @@ public class OrderServiceImpl implements OrderService {
                 price.setGoodsId(goods.getGoodsId());
                 price.setPriceNow(goods.getGoodsPriceNow());
                 price.setAmount(vo.getGoods().get(goods.getGoodsId()));
-                price.setTotalPrice(StringUtil.formatPriceNum(vo.getGoods().get(goods.getGoodsId()) * goods.getGoodsPriceNow()));
+                price.setTotalPrice(StringUtil.formatPriceNum(HPCalcUtil.mul(vo.getGoods().get(goods.getGoodsId()), goods.getGoodsPriceNow())));
                 goodsPriceMap.put(goods.getGoodsId(), price);
-                goodsTotalPrice += price.getTotalPrice();
+                goodsTotalPrice = HPCalcUtil.add(goodsTotalPrice, price.getTotalPrice());
             }
             totalPrice = goodsTotalPrice;
             SettlementDTO data = new SettlementDTO();
@@ -231,16 +233,12 @@ public class OrderServiceImpl implements OrderService {
         data.forEach(d -> {
             for (String s : d.getGoods().split(",")) {
                 goodsIds.add(s.split(":")[0]);
-                addressIds.add(d.getAddressId());
             }
         });
         List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(goodsIds));
-        List<AddressEntity> address = addressRepository.findAllByAddressIdIn(new ArrayList<>(addressIds));
 
         result.setResultList(data);
-        result.setExtra(StringUtil.getNewExtraMap(
-                new ExtraDTO("goods", goods.stream().collect(Collectors.toMap(GoodsEntity::getGoodsId, p -> p))),
-                new ExtraDTO("address", address.stream().collect(Collectors.toMap(AddressEntity::getAddressId, p -> p)))));
+        result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("goods", goods.stream().collect(Collectors.toMap(GoodsEntity::getGoodsId, p -> p)))));
         result.setTotal((long) data.size());
         return result;
     }

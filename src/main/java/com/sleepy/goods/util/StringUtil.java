@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -203,7 +204,8 @@ public class StringUtil {
     }
 
     public static Double formatPriceNum(double price) {
-        return new BigDecimal(price).setScale(2, BigDecimal.ROUND_DOWN).doubleValue();
+        DecimalFormat df = new DecimalFormat("0.00");
+        return new Double(df.format(price).toString());
     }
 
     public static String getSplitString(String splitSymbol, String... strings) {
