@@ -89,13 +89,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public CommonDTO<UserDTO> getUserInfoByCode(String code) throws Exception {
         Map<String, Object> parameters = new HashMap<>(4);
-        parameters.put("openId", code);
+        String openId = getWeixinOpenId(code);
+        parameters.put("openId", openId);
         List<UserDTO> entities = findUser(parameters);
         if (entities.size() > 0) {
             return getUserDetailResult(entities);
         } else {
             UserVO vo = new UserVO();
-            vo.setWxCode(code);
+            vo.setWxOpenId(openId);
             return saveUser(vo);
         }
     }
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public CommonDTO<UserDTO> saveUser(UserVO vo) throws Exception {
         CommonDTO<UserDTO> result = new CommonDTO<>();
-        String openId = getWeixinOpenId(vo);
+        String openId = StringUtil.isNotNullOrEmpty(vo.getWxOpenId()) ? vo.getWxOpenId() : getWeixinOpenId(vo.getWxCode());
         UserEntity user;
         try {
             user = userRepository.findByOpenId(openId).get();
@@ -243,6 +244,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private List<UserDTO> findUser(Map<String, Object> parameters) {
+        if (StringUtil.isNullOrEmpty(parameters.get("userId")) && StringUtil.isNullOrEmpty(parameters.get("openId"))) {
+            return new ArrayList<>();
+        }
         String sql = jpqlParser.parse(new ParserParameter("userJpql.findUser", parameters, "mysql")).getExecutableSql();
         Session session = getSession();
         Query query = session.createNativeQuery(sql).addEntity(UserDTO.class);
@@ -251,10 +255,10 @@ public class UserServiceImpl implements UserService {
         return resultList;
     }
 
-    private String getWeixinOpenId(UserVO vo) throws Exception {
-        if (!StringUtil.isNullOrEmpty(vo.getWxCode())) {
+    private String getWeixinOpenId(String wxCode) throws Exception {
+        if (!StringUtil.isNullOrEmpty(wxCode)) {
             RestTemplate restTemplate = new RestTemplate();
-            String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + "wx8dfe7072afd33eaa" + "&secret=" + "f43ff7c674a0b751d5752c9f4f210bf9" + "&js_code=" + vo.getWxCode() + "&grant_type=" + vo.getWxCode();
+            String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + "wx8dfe7072afd33eaa" + "&secret=" + "f43ff7c674a0b751d5752c9f4f210bf9" + "&js_code=" + wxCode + "&grant_type=" + wxCode;
             String respond = HttpUtil.doGet(url);
             String openId = JSON.parseObject(respond).getString("openid");
             if (!StringUtil.isNullOrEmpty(openId)) {

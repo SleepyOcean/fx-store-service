@@ -14,6 +14,8 @@ public class UserVO {
     private String appSecret;
     private String wxCode;
 
+    private String wxOpenId;
+
     private String userId;
     private String userName;
     private String deliveryInfo;

@@ -30,7 +30,7 @@ public class StringUtil {
      * @param string
      * @return
      */
-    public static boolean isNullOrEmpty(String string) {
+    public static boolean isNullOrEmpty(Object string) {
         if (null == string || "".equals(string)) {
             return true;
         }
