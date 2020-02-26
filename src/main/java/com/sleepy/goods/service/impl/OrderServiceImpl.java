@@ -19,6 +19,7 @@ import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.OrderVO;
 import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
+import com.sleepy.goods.vo.order.UpdateStatusVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -224,6 +225,20 @@ public class OrderServiceImpl implements OrderService {
             StringUtil.throwExceptionInfo("购物车结算商品数据goods不能为空");
         }
         return result;
+    }
+
+    @Override
+    public CommonDTO<OrderEntity> updateOrderStatus(UpdateStatusVO vo) {
+        CommonDTO<OrderEntity> result = new CommonDTO<>();
+        OrderEntity entity = orderRepository.findById(vo.getOrderId()).get();
+        entity.setDeliveryStatus(vo.getStatus());
+        result.setResult(orderRepository.saveAndFlush(entity));
+        return result;
+    }
+
+    @Override
+    public CommonDTO<OrderEntity> assignOrder(String status) {
+        return null;
     }
 
     private CommonDTO<OrderEntity> getOrderDetailResult(List<OrderEntity> data) {

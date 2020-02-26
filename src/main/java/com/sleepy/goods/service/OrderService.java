@@ -8,6 +8,7 @@ import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.OrderVO;
 import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
+import com.sleepy.goods.vo.order.UpdateStatusVO;
 
 /**
  * @author Captain1920
@@ -30,4 +31,7 @@ public interface OrderService {
 
     CommonDTO<SettlementDTO> settlement(CartSettlementVO vo) throws Exception;
 
+    CommonDTO<OrderEntity> updateOrderStatus(UpdateStatusVO vo);
+
+    CommonDTO<OrderEntity> assignOrder(String status);
 }

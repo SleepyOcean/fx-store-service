@@ -9,6 +9,7 @@ import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.OrderVO;
 import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
+import com.sleepy.goods.vo.order.UpdateStatusVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,18 @@ public class OrderController {
     @GetMapping("/order/getByOrderId")
     public CommonDTO<OrderEntity> getOrderByOrderId(@RequestParam("orderId") String orderId) {
         return orderService.getOrderByOrderId(orderId);
+    }
+
+    @ApiOperation("更新订单状态")
+    @PostMapping("/order/updateStatus")
+    public CommonDTO<OrderEntity> updateOrderStatus(@RequestBody @Valid UpdateStatusVO vo) {
+        return orderService.updateOrderStatus(vo);
+    }
+
+    @ApiOperation("分配订单状态")
+    @GetMapping("/order/assign")
+    public CommonDTO<OrderEntity> assignOrder(@RequestParam("status") String status) {
+        return orderService.assignOrder(status);
     }
 
     @ApiOperation("保存订单")
