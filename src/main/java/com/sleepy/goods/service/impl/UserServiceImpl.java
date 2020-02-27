@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sleepy.goods.dto.CartDTO;
 import com.sleepy.goods.dto.CommonDTO;
-import com.sleepy.goods.dto.ExtraDTO;
+import com.sleepy.goods.dto.MapDTO;
 import com.sleepy.goods.dto.UserDTO;
 import com.sleepy.goods.entity.AddressEntity;
 import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.entity.UserEntity;
+import com.sleepy.goods.jpql.JpqlExecutor;
 import com.sleepy.goods.repository.AddressRepository;
 import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.repository.OrderRepository;
@@ -20,17 +21,11 @@ import com.sleepy.goods.vo.user.AddressDelVO;
 import com.sleepy.goods.vo.user.AddressNewVO;
 import com.sleepy.goods.vo.user.AddressVO;
 import com.sleepy.goods.vo.user.UserVO;
-import com.sleepy.jpql.JpqlParser;
-import com.sleepy.jpql.ParserParameter;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import java.util.*;
 
 /**
@@ -51,18 +46,12 @@ public class UserServiceImpl implements UserService {
     AddressRepository addressRepository;
 
     @Autowired
-    JpqlParser jpqlParser;
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
-
-    public Session getSession() {
-        return entityManagerFactory.unwrap(SessionFactory.class).openSession();
-    }
+    JpqlExecutor jpqlExecutor;
 
     @Override
     public CommonDTO<UserDTO> getUserInfoById(String id) {
         Map<String, Object> parameters = new HashMap<>(4);
-        parameters.put("id", id);
+        parameters.put("userId", id);
         List<UserDTO> entities = findUser(parameters);
         return getUserDetailResult(entities);
     }
@@ -75,11 +64,11 @@ public class UserServiceImpl implements UserService {
             JSONObject carts = JSON.parseObject(cartString);
             Map<String, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
             List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(cartsMap.keySet()));
-            result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("goods", goods),
-                    new ExtraDTO("carts", new ArrayList<>(cartsMap.values())),
-                    new ExtraDTO("orders", orderRepository.findByUserId(data.getUserId()))));
+            result.setExtra(StringUtil.getNewExtraMap(new MapDTO("goods", goods),
+                    new MapDTO("carts", new ArrayList<>(cartsMap.values())),
+                    new MapDTO("orders", orderRepository.findByUserId(data.getUserId()))));
         } else {
-            result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("orders", orderRepository.findByUserId(data.getUserId()))));
+            result.setExtra(StringUtil.getNewExtraMap(new MapDTO("orders", orderRepository.findByUserId(data.getUserId()))));
         }
         data.setCartInfo(null);
         result.setResult(data);
@@ -176,7 +165,7 @@ public class UserServiceImpl implements UserService {
     public CommonDTO<AddressEntity> getAddressInfoByUserId(String userId) {
         CommonDTO<AddressEntity> result = new CommonDTO<>();
         result.setResultList(addressRepository.findAllByUserId(userId));
-        result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("defaultAddressId", userRepository.findByUserId(userId).get().getDefaultAddressId())));
+        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("defaultAddressId", userRepository.findByUserId(userId).get().getDefaultAddressId())));
         return result;
     }
 
@@ -247,11 +236,7 @@ public class UserServiceImpl implements UserService {
         if (StringUtil.isNullOrEmpty(parameters.get("userId")) && StringUtil.isNullOrEmpty(parameters.get("openId"))) {
             return new ArrayList<>();
         }
-        String sql = jpqlParser.parse(new ParserParameter("userJpql.findUser", parameters, "mysql")).getExecutableSql();
-        Session session = getSession();
-        Query query = session.createNativeQuery(sql).addEntity(UserDTO.class);
-        List<UserDTO> resultList = query.getResultList();
-        session.close();
+        List<UserDTO> resultList = jpqlExecutor.exec("user.findUser", parameters, UserDTO.class).getResultList();
         return resultList;
     }
 

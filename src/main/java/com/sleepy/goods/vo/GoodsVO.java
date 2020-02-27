@@ -38,4 +38,7 @@ public class GoodsVO {
 
     @ApiModelProperty("商品现价")
     private String goodsPriceNow;
+
+    private int page;
+    private int pageSize;
 }

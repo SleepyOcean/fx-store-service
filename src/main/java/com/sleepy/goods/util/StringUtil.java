@@ -2,7 +2,7 @@ package com.sleepy.goods.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sleepy.goods.dto.ExtraDTO;
+import com.sleepy.goods.dto.MapDTO;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -195,10 +195,10 @@ public class StringUtil {
         return s.toString();
     }
 
-    public static Map<String, Object> getNewExtraMap(ExtraDTO... extras) {
+    public static Map<String, Object> getNewExtraMap(MapDTO... extras) {
         Map<String, Object> extra = new HashMap<>(extras.length);
-        for (ExtraDTO extraDTO : extras) {
-            extra.put(extraDTO.getKey(), extraDTO.getValue());
+        for (MapDTO mapDTO : extras) {
+            extra.put(mapDTO.getKey(), mapDTO.getValue());
         }
         return extra;
     }
@@ -215,5 +215,9 @@ public class StringUtil {
             sb.append(splitSymbol);
         }
         return sb.substring(0, sb.length() - 1);
+    }
+
+    public static Map<String, Object> newParamsMap(MapDTO... maps) {
+        return getNewExtraMap(maps);
     }
 }

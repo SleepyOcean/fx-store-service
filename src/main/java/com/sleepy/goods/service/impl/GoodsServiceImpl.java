@@ -1,7 +1,10 @@
 package com.sleepy.goods.service.impl;
 
 import com.sleepy.goods.dto.CommonDTO;
+import com.sleepy.goods.dto.MapDTO;
 import com.sleepy.goods.entity.GoodsEntity;
+import com.sleepy.goods.jpql.JpqlExecutor;
+import com.sleepy.goods.jpql.JpqlResultSet;
 import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.service.GoodsService;
 import com.sleepy.goods.util.StringUtil;
@@ -23,14 +26,19 @@ import java.util.List;
 public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
+    JpqlExecutor<GoodsEntity> jpqlExecutor;
+    @Autowired
     GoodsRepository goodsRepository;
 
     @Override
     public CommonDTO<GoodsEntity> getGoodsList(GoodsVO vo) {
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
-        List<GoodsEntity> data = goodsRepository.findAll();
-        result.setResultList(data);
-        result.setTotal((long) data.size());
+        JpqlResultSet resultSet = jpqlExecutor.exec("goods.findGoods",
+                StringUtil.newParamsMap(new MapDTO("limit", vo.getPageSize()),
+                        new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize())),
+                GoodsEntity.class);
+        result.setResultList(resultSet.getResultList());
+        result.setTotal(resultSet.getTotal());
         return result;
     }
 

@@ -8,6 +8,7 @@ import com.sleepy.goods.entity.AddressEntity;
 import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.entity.OrderEntity;
 import com.sleepy.goods.entity.UserEntity;
+import com.sleepy.goods.jpql.JpqlExecutor;
 import com.sleepy.goods.repository.AddressRepository;
 import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.repository.OrderRepository;
@@ -47,15 +48,22 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     AddressRepository addressRepository;
 
+    @Autowired
+    JpqlExecutor jpqlExecutor;
+
     @Override
     public CommonDTO<OrderEntity> getOrderListByUserId(String userId) {
-        List<OrderEntity> data = orderRepository.findByUserId(userId);
+        List<OrderEntity> data = jpqlExecutor.exec("order.findOrder",
+                StringUtil.newParamsMap(new MapDTO("userId", userId)),
+                OrderEntity.class).getResultList();
         return getOrderDetailResult(data);
     }
 
     @Override
     public CommonDTO<OrderEntity> getOrderByOrderId(String orderId) {
-        List<OrderEntity> data = Arrays.asList(orderRepository.findById(orderId).get());
+        List<OrderEntity> data = jpqlExecutor.exec("order.findOrder",
+                StringUtil.newParamsMap(new MapDTO("orderId", orderId)),
+                OrderEntity.class).getResultList();
         return getOrderDetailResult(data);
     }
 
@@ -119,7 +127,7 @@ public class OrderServiceImpl implements OrderService {
             List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(goodsIds);
 
             result.setResultList(data);
-            result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("goods", goods)));
+            result.setExtra(StringUtil.getNewExtraMap(new MapDTO("goods", goods)));
             result.setTotal((long) data.size());
         }
         return result;
@@ -219,8 +227,8 @@ public class OrderServiceImpl implements OrderService {
             data.setCouponPrice(StringUtil.formatPriceNum(0d));
             data.setDeliveryPrice(StringUtil.formatPriceNum(0d));
             result.setResult(data);
-            result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("settlementTime", StringUtil.getDateString(new Date())),
-                    new ExtraDTO("settlementDetail", goodsPriceMap)));
+            result.setExtra(StringUtil.getNewExtraMap(new MapDTO("settlementTime", StringUtil.getDateString(new Date())),
+                    new MapDTO("settlementDetail", goodsPriceMap)));
         } else {
             StringUtil.throwExceptionInfo("购物车结算商品数据goods不能为空");
         }
@@ -253,7 +261,7 @@ public class OrderServiceImpl implements OrderService {
         List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(goodsIds));
 
         result.setResultList(data);
-        result.setExtra(StringUtil.getNewExtraMap(new ExtraDTO("goods", goods.stream().collect(Collectors.toMap(GoodsEntity::getGoodsId, p -> p)))));
+        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("goods", goods.stream().collect(Collectors.toMap(GoodsEntity::getGoodsId, p -> p)))));
         result.setTotal((long) data.size());
         return result;
     }

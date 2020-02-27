@@ -27,8 +27,11 @@ public class GoodsController {
     GoodsService goodsService;
 
     @GetMapping("/get")
-    public CommonDTO<GoodsEntity> get() {
-        return goodsService.getGoodsList(new GoodsVO());
+    public CommonDTO<GoodsEntity> get(@RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
+        GoodsVO vo = new GoodsVO();
+        vo.setPage(page);
+        vo.setPageSize(pageSize);
+        return goodsService.getGoodsList(vo);
     }
 
     @GetMapping("/search")
