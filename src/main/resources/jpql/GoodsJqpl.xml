@@ -11,6 +11,9 @@
         #if($goodsName)
         and goods_name = :goodsName
         #end
+        #if($goodsNameLike)
+        and goods_name like :goodsNameLike
+        #end
         #if(!$getTotal)
         #if($limit)
         limit :limit

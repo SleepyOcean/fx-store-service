@@ -30,4 +30,7 @@ public class OrderVO {
     private Integer deliveryStatus;
 
     private String deliveryMan;
+
+    private int page;
+    private int pageSize;
 }

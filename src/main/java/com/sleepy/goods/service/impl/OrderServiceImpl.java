@@ -9,6 +9,7 @@ import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.entity.OrderEntity;
 import com.sleepy.goods.entity.UserEntity;
 import com.sleepy.goods.jpql.JpqlExecutor;
+import com.sleepy.goods.jpql.JpqlResultSet;
 import com.sleepy.goods.repository.AddressRepository;
 import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.repository.OrderRepository;
@@ -52,19 +53,22 @@ public class OrderServiceImpl implements OrderService {
     JpqlExecutor jpqlExecutor;
 
     @Override
-    public CommonDTO<OrderEntity> getOrderListByUserId(String userId) {
-        List<OrderEntity> data = jpqlExecutor.exec("order.findOrder",
-                StringUtil.newParamsMap(new MapDTO("userId", userId)),
-                OrderEntity.class).getResultList();
-        return getOrderDetailResult(data);
+    public CommonDTO<OrderEntity> getOrderListByUserId(OrderVO vo) {
+        JpqlResultSet set = jpqlExecutor.exec("order.findOrder",
+                StringUtil.newParamsMap(new MapDTO("userId", vo.getUserId()), new MapDTO("limit", vo.getPageSize()),
+                        new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize())), OrderEntity.class);
+        List<OrderEntity> data = set.getResultList();
+        CommonDTO<OrderEntity> result = getOrderDetailResult(data);
+        return result;
     }
 
     @Override
     public CommonDTO<OrderEntity> getOrderByOrderId(String orderId) {
-        List<OrderEntity> data = jpqlExecutor.exec("order.findOrder",
-                StringUtil.newParamsMap(new MapDTO("orderId", orderId)),
-                OrderEntity.class).getResultList();
-        return getOrderDetailResult(data);
+        JpqlResultSet set = jpqlExecutor.exec("order.findOrder",
+                StringUtil.newParamsMap(new MapDTO("orderId", orderId)), OrderEntity.class);
+        List<OrderEntity> data = set.getResultList();
+        CommonDTO<OrderEntity> result = getOrderDetailResult(data);
+        return result;
     }
 
     @Override
@@ -167,7 +171,7 @@ public class OrderServiceImpl implements OrderService {
             userRepository.saveAndFlush(entity);
             result.setResult(cart);
         }
-        return result;
+        return getCartList(vo.getUserId());
     }
 
     @Override
@@ -252,7 +256,6 @@ public class OrderServiceImpl implements OrderService {
     private CommonDTO<OrderEntity> getOrderDetailResult(List<OrderEntity> data) {
         CommonDTO<OrderEntity> result = new CommonDTO<>();
         Set<String> goodsIds = new HashSet<>();
-        Set<String> addressIds = new HashSet<>();
         data.forEach(d -> {
             for (String s : d.getGoods().split(",")) {
                 goodsIds.add(s.split(":")[0]);

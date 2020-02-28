@@ -35,8 +35,12 @@ public class GoodsController {
     }
 
     @GetMapping("/search")
-    public CommonDTO<GoodsEntity> search(@RequestParam("goodsName") String goodsName) {
-        return goodsService.searchGoodsList(goodsName);
+    public CommonDTO<GoodsEntity> search(@RequestParam("goodsName") String goodsName, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
+        GoodsVO vo = new GoodsVO();
+        vo.setGoodsName(goodsName);
+        vo.setPage(page);
+        vo.setPageSize(pageSize);
+        return goodsService.searchGoodsList(vo);
     }
 
     @PostMapping("/save")

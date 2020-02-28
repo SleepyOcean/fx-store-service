@@ -16,5 +16,5 @@ public interface GoodsService {
 
     CommonDTO<GoodsEntity> saveGoodsList(GoodsNewVO vo) throws Exception;
 
-    CommonDTO<GoodsEntity> searchGoodsList(String goodsName);
+    CommonDTO<GoodsEntity> searchGoodsList(GoodsVO vo);
 }

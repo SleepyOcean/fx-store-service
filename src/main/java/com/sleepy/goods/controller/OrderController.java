@@ -40,8 +40,12 @@ public class OrderController {
 
     @ApiOperation("获取指定用户订单列表")
     @GetMapping("/order/getByUserId")
-    public CommonDTO<OrderEntity> getOrderByUserId(@RequestParam("userId") String userId) {
-        return orderService.getOrderListByUserId(userId);
+    public CommonDTO<OrderEntity> getOrderByUserId(@RequestParam("userId") String userId, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
+        OrderVO vo = new OrderVO();
+        vo.setPage(page);
+        vo.setPageSize(pageSize);
+        vo.setUserId(userId);
+        return orderService.getOrderListByUserId(vo);
     }
 
     @ApiOperation("获取指定用户订单列表")

@@ -62,11 +62,14 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public CommonDTO<GoodsEntity> searchGoodsList(String goodsName) {
+    public CommonDTO<GoodsEntity> searchGoodsList(GoodsVO vo) {
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
-        List<GoodsEntity> data = goodsRepository.findAllByGoodsNameIsLike("%" + goodsName + "%");
+        JpqlResultSet set = jpqlExecutor.exec("goods.findGoods",
+                StringUtil.newParamsMap(new MapDTO("goodsNameLike", "%" + vo.getGoodsName() + "%"), new MapDTO("limit", vo.getPageSize()),
+                        new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize())), GoodsEntity.class);
+        List<GoodsEntity> data = set.getResultList();
         result.setResultList(data);
-        result.setTotal((long) data.size());
+        result.setTotal(set.getTotal());
         return result;
     }
 }

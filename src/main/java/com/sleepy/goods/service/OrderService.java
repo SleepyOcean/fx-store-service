@@ -15,7 +15,7 @@ import com.sleepy.goods.vo.order.UpdateStatusVO;
  * @create 2020/2/14 20:23
  */
 public interface OrderService {
-    CommonDTO<OrderEntity> getOrderListByUserId(String userId);
+    CommonDTO<OrderEntity> getOrderListByUserId(OrderVO vo);
 
     CommonDTO<OrderEntity> getOrderByOrderId(String orderId);
 
