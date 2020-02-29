@@ -8,8 +8,6 @@ import com.sleepy.goods.entity.AddressEntity;
 import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.entity.OrderEntity;
 import com.sleepy.goods.entity.UserEntity;
-import com.sleepy.goods.jpql.JpqlExecutor;
-import com.sleepy.goods.jpql.JpqlResultSet;
 import com.sleepy.goods.repository.AddressRepository;
 import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.repository.OrderRepository;
@@ -22,6 +20,8 @@ import com.sleepy.goods.vo.OrderVO;
 import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
 import com.sleepy.goods.vo.order.UpdateStatusVO;
+import com.sleepy.jpql.JpqlExecutor;
+import com.sleepy.jpql.JpqlResultSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -3,13 +3,13 @@ package com.sleepy.goods.service.impl;
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.dto.MapDTO;
 import com.sleepy.goods.entity.GoodsEntity;
-import com.sleepy.goods.jpql.JpqlExecutor;
-import com.sleepy.goods.jpql.JpqlResultSet;
 import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.service.GoodsService;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.GoodsVO;
 import com.sleepy.goods.vo.goods.GoodsNewVO;
+import com.sleepy.jpql.JpqlExecutor;
+import com.sleepy.jpql.JpqlResultSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

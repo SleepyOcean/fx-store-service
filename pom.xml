@@ -20,8 +20,8 @@
 
         <dependency>
             <groupId>com.sleepy</groupId>
-            <artifactId>so-jpql-core</artifactId>
-            <version>1.0.0-RELEASE</version>
+            <artifactId>so-jpql-template-engine</artifactId>
+            <version>1.0.1.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -112,7 +112,7 @@
         <repository>
             <id>oceanmaven</id>
             <name>ocean maven</name>
-            <url>http://nexus.sleepyocean.cn:8050/repository/maven-ocean/</url>
+            <url>http://nexus.sleepyocean.cn/repository/maven-ocean/</url>
         </repository>
     </repositories>
 
