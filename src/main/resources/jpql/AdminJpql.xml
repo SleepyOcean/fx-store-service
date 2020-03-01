@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jpa module="admin">
+    <jpql id="findAdmin">
+        select admin_id, admin_name, contact from fx_admin where 1=1
+        #if($adminId)
+        and admin_id = :adminId
+        #end
+        #if($openId)
+        and open_id = :openId
+        #end
+    </jpql>
+</jpa>
