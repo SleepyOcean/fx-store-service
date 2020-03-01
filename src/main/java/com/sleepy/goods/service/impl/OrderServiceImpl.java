@@ -16,9 +16,9 @@ import com.sleepy.goods.service.OrderService;
 import com.sleepy.goods.util.HPCalcUtil;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.CartVO;
-import com.sleepy.goods.vo.OrderVO;
 import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
+import com.sleepy.goods.vo.order.OrderSearchVO;
 import com.sleepy.goods.vo.order.UpdateStatusVO;
 import com.sleepy.jpql.JpqlExecutor;
 import com.sleepy.jpql.JpqlResultSet;
@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
     JpqlExecutor jpqlExecutor;
 
     @Override
-    public CommonDTO<OrderEntity> getOrderListByUserId(OrderVO vo) {
+    public CommonDTO<OrderEntity> getOrderListByUserId(OrderSearchVO vo) {
         JpqlResultSet set = jpqlExecutor.exec("order.findOrder",
                 StringUtil.newParamsMap(new MapDTO("userId", vo.getUserId()), new MapDTO("limit", vo.getPageSize()),
                         new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize())), OrderEntity.class);
@@ -194,7 +194,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public CommonDTO<OrderEntity> getOrderListByCond(OrderVO vo) {
+    public CommonDTO<OrderEntity> getOrderListByCond(OrderSearchVO vo) {
         if (vo.getDeliveryStatus() != null) {
             List<OrderEntity> data = orderRepository.findAllByDeliveryStatusOrderByOrderTimeDesc(vo.getDeliveryStatus());
             return getOrderDetailResult(data);
@@ -252,6 +252,7 @@ public class OrderServiceImpl implements OrderService {
     public CommonDTO<OrderEntity> assignOrder(String status) {
         return null;
     }
+
 
     private CommonDTO<OrderEntity> getOrderDetailResult(List<OrderEntity> data) {
         CommonDTO<OrderEntity> result = new CommonDTO<>();

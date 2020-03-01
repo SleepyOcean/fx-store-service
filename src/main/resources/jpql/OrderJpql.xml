@@ -2,7 +2,7 @@
 <jpa module="order">
     <jpql id="findOrder">
         select
-        #if($getTotal)
+        #if($pageable)
         count(*)
         #else
         *
@@ -14,7 +14,7 @@
         #if($orderId)
         and order_id = :orderId
         #end
-        #if(!$getTotal)
+        #if(!$pageable)
         #if($limit)
         limit :limit
         #end

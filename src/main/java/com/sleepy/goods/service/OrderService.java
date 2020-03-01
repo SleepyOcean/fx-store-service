@@ -5,9 +5,9 @@ import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.dto.SettlementDTO;
 import com.sleepy.goods.entity.OrderEntity;
 import com.sleepy.goods.vo.CartVO;
-import com.sleepy.goods.vo.OrderVO;
 import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
+import com.sleepy.goods.vo.order.OrderSearchVO;
 import com.sleepy.goods.vo.order.UpdateStatusVO;
 
 /**
@@ -15,7 +15,7 @@ import com.sleepy.goods.vo.order.UpdateStatusVO;
  * @create 2020/2/14 20:23
  */
 public interface OrderService {
-    CommonDTO<OrderEntity> getOrderListByUserId(OrderVO vo);
+    CommonDTO<OrderEntity> getOrderListByUserId(OrderSearchVO vo);
 
     CommonDTO<OrderEntity> getOrderByOrderId(String orderId);
 
@@ -27,7 +27,7 @@ public interface OrderService {
 
     CommonDTO<CartDTO> deleteGoodsInCart(CartVO vo);
 
-    CommonDTO<OrderEntity> getOrderListByCond(OrderVO vo);
+    CommonDTO<OrderEntity> getOrderListByCond(OrderSearchVO vo);
 
     CommonDTO<SettlementDTO> settlement(CartSettlementVO vo) throws Exception;
 

@@ -6,9 +6,9 @@ import com.sleepy.goods.dto.SettlementDTO;
 import com.sleepy.goods.entity.OrderEntity;
 import com.sleepy.goods.service.OrderService;
 import com.sleepy.goods.vo.CartVO;
-import com.sleepy.goods.vo.OrderVO;
 import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
+import com.sleepy.goods.vo.order.OrderSearchVO;
 import com.sleepy.goods.vo.order.UpdateStatusVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,14 +34,14 @@ public class OrderController {
 
     @ApiOperation("获取所有未完成的订单列表")
     @PostMapping("/order/list")
-    public CommonDTO<OrderEntity> getOrderList(@RequestBody OrderVO vo) {
+    public CommonDTO<OrderEntity> getOrderList(@RequestBody OrderSearchVO vo) {
         return orderService.getOrderListByCond(vo);
     }
 
     @ApiOperation("获取指定用户订单列表")
     @GetMapping("/order/getByUserId")
     public CommonDTO<OrderEntity> getOrderByUserId(@RequestParam("userId") String userId, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
-        OrderVO vo = new OrderVO();
+        OrderSearchVO vo = new OrderSearchVO();
         vo.setPage(page);
         vo.setPageSize(pageSize);
         vo.setUserId(userId);
