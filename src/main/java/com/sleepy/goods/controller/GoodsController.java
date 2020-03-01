@@ -34,6 +34,14 @@ public class GoodsController {
         return goodsService.getGoodsList(vo);
     }
 
+    @PostMapping("/getByCategory")
+    public CommonDTO<GoodsEntity> getByCategory(@RequestParam("category") Integer category, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) throws Exception {
+        GoodsVO vo = new GoodsVO();
+        vo.setPage(page);
+        vo.setPageSize(pageSize);
+        return goodsService.getByCategory(vo);
+    }
+
     @GetMapping("/search")
     public CommonDTO<GoodsEntity> search(@RequestParam("goodsName") String goodsName, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
         GoodsVO vo = new GoodsVO();

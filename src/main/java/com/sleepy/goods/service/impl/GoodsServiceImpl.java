@@ -2,7 +2,9 @@ package com.sleepy.goods.service.impl;
 
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.dto.MapDTO;
+import com.sleepy.goods.entity.CategoryEntity;
 import com.sleepy.goods.entity.GoodsEntity;
+import com.sleepy.goods.repository.CategoryRepository;
 import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.service.GoodsService;
 import com.sleepy.goods.util.StringUtil;
@@ -29,6 +31,8 @@ public class GoodsServiceImpl implements GoodsService {
     JpqlExecutor<GoodsEntity> jpqlExecutor;
     @Autowired
     GoodsRepository goodsRepository;
+    @Autowired
+    CategoryRepository categoryRepository;
 
     @Override
     public CommonDTO<GoodsEntity> getGoodsList(GoodsVO vo) {
@@ -72,4 +76,24 @@ public class GoodsServiceImpl implements GoodsService {
         result.setTotal(set.getTotal());
         return result;
     }
+
+    @Override
+    public CommonDTO<GoodsEntity> getByCategory(GoodsVO vo) {
+        CommonDTO<GoodsEntity> result = new CommonDTO<>();
+        JpqlResultSet set = jpqlExecutor.exec("goods.findGoods",
+                StringUtil.newParamsMap(new MapDTO("category", vo.getCategory()), new MapDTO("limit", vo.getPageSize()),
+                        new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize())), GoodsEntity.class);
+        List<GoodsEntity> data = set.getResultList();
+        result.setResultList(data);
+        result.setTotal(set.getTotal());
+        List<CategoryEntity> goodsCategory = getGoodsCategory(1);
+        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("category", goodsCategory)));
+        return result;
+    }
+
+    private List<CategoryEntity> getGoodsCategory(int categoryCode) {
+        return categoryRepository.findAllByCategoryCode(categoryCode);
+    }
+
+
 }

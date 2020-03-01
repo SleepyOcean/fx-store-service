@@ -2,7 +2,7 @@
 <jpa module="goods">
     <jpql id="findGoods">
         select
-        #if($getTotal)
+        #if($pageable)
         count(*)
         #else
         *
@@ -14,7 +14,10 @@
         #if($goodsNameLike)
         and goods_name like :goodsNameLike
         #end
-        #if(!$getTotal)
+        #if($category)
+        and category = :category
+        #end
+        #if(!$pageable)
         #if($limit)
         limit :limit
         #end

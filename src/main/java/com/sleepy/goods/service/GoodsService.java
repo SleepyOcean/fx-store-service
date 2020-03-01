@@ -17,4 +17,6 @@ public interface GoodsService {
     CommonDTO<GoodsEntity> saveGoodsList(GoodsNewVO vo) throws Exception;
 
     CommonDTO<GoodsEntity> searchGoodsList(GoodsVO vo);
+
+    CommonDTO<GoodsEntity> getByCategory(GoodsVO vo);
 }
