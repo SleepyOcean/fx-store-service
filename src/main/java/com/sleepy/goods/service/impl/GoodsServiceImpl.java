@@ -92,7 +92,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     private List<CategoryEntity> getGoodsCategory(int categoryCode) {
-        return categoryRepository.findAllByCategoryCode(categoryCode);
+        return categoryRepository.findAllByCategoryType(categoryCode);
     }
 
 

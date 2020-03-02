@@ -12,5 +12,5 @@ import java.util.List;
  * @create 2020-02-14 21:23
  **/
 public interface CategoryRepository extends JpaRepository<CategoryEntity, String> {
-    List<CategoryEntity> findAllByCategoryCode(int categoryCode);
+    List<CategoryEntity> findAllByCategoryType(int categoryType);
 }

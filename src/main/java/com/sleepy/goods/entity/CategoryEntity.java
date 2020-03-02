@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class CategoryEntity {
     @Id
     @GeneratedValue(generator = "jpa-uuid")
-    @Column(length = 8)
+    @Column(length = 32)
     private String categoryId;
 
     @Column(name = "category_type", columnDefinition = "TINYINT NOT NULL COMMENT '分类类型'")

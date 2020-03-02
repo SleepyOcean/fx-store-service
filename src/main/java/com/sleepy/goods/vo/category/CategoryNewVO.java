@@ -1,11 +1,11 @@
 package com.sleepy.goods.vo.category;
 
+import com.sleepy.goods.entity.CategoryEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 分类新建VO
@@ -16,20 +16,21 @@ import javax.validation.constraints.NotNull;
 @Data
 @ApiModel("分类新建VO")
 public class CategoryNewVO {
+    List<CategoryEntity> list;
 
-    @NotNull
+    //    @NotNull
     @ApiModelProperty("分类类型")
     private Integer categoryType;
 
-    @NotEmpty
+    //    @NotEmpty
     @ApiModelProperty("分类类型名称")
     private String categoryTypeName;
 
-    @NotNull
+    //    @NotNull
     @ApiModelProperty("类型编码")
     private Integer categoryCode;
 
-    @NotEmpty
+    //    @NotEmpty
     @ApiModelProperty("分类名称")
     private String categoryName;
 }

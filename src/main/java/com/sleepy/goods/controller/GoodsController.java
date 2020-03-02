@@ -2,9 +2,11 @@ package com.sleepy.goods.controller;
 
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.entity.GoodsEntity;
+import com.sleepy.goods.repository.CategoryRepository;
 import com.sleepy.goods.service.GoodsService;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.GoodsVO;
+import com.sleepy.goods.vo.category.CategoryNewVO;
 import com.sleepy.goods.vo.goods.GoodsNewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -34,12 +36,24 @@ public class GoodsController {
         return goodsService.getGoodsList(vo);
     }
 
-    @PostMapping("/getByCategory")
+    @Autowired
+    CategoryRepository categoryRepository;
+
+    @GetMapping("/getByCategory")
     public CommonDTO<GoodsEntity> getByCategory(@RequestParam("category") Integer category, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) throws Exception {
         GoodsVO vo = new GoodsVO();
+        vo.setCategory(category);
         vo.setPage(page);
         vo.setPageSize(pageSize);
         return goodsService.getByCategory(vo);
+    }
+
+    @PostMapping("/category")
+    public String getByCategory(@RequestBody CategoryNewVO vo) throws Exception {
+        vo.getList().forEach(entity -> {
+            categoryRepository.saveAndFlush(entity);
+        });
+        return "ok";
     }
 
     @GetMapping("/search")
