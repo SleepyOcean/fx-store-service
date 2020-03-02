@@ -43,6 +43,8 @@ public class GoodsServiceImpl implements GoodsService {
                 GoodsEntity.class);
         result.setResultList(resultSet.getResultList());
         result.setTotal(resultSet.getTotal());
+        List<CategoryEntity> goodsCategory = getGoodsCategory(1);
+        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("category", goodsCategory)));
         return result;
     }
 

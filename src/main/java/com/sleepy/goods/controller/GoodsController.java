@@ -29,11 +29,16 @@ public class GoodsController {
     GoodsService goodsService;
 
     @GetMapping("/get")
-    public CommonDTO<GoodsEntity> get(@RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
+    public CommonDTO<GoodsEntity> get(@RequestParam(value = "category", required = false) Integer category, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
         GoodsVO vo = new GoodsVO();
         vo.setPage(page);
         vo.setPageSize(pageSize);
-        return goodsService.getGoodsList(vo);
+        if (category != null) {
+            vo.setCategory(category);
+            return goodsService.getByCategory(vo);
+        } else {
+            return goodsService.getGoodsList(vo);
+        }
     }
 
     @Autowired
@@ -42,7 +47,6 @@ public class GoodsController {
     @GetMapping("/getByCategory")
     public CommonDTO<GoodsEntity> getByCategory(@RequestParam("category") Integer category, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) throws Exception {
         GoodsVO vo = new GoodsVO();
-        vo.setCategory(category);
         vo.setPage(page);
         vo.setPageSize(pageSize);
         return goodsService.getByCategory(vo);
