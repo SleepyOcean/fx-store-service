@@ -32,4 +32,7 @@ public class CategoryEntity {
 
     @Column(name = "category_name", columnDefinition = "VARCHAR(256) NOT NULL COMMENT '分类名称'")
     private String categoryName;
+
+    @Column(name = "category_img_url", columnDefinition = "VARCHAR(256) NOT NULL COMMENT '分类图片url'")
+    private String categoryImgUrl;
 }

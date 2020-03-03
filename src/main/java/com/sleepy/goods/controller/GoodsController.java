@@ -47,6 +47,7 @@ public class GoodsController {
     @GetMapping("/getByCategory")
     public CommonDTO<GoodsEntity> getByCategory(@RequestParam("category") Integer category, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) throws Exception {
         GoodsVO vo = new GoodsVO();
+        vo.setCategory(category);
         vo.setPage(page);
         vo.setPageSize(pageSize);
         return goodsService.getByCategory(vo);
