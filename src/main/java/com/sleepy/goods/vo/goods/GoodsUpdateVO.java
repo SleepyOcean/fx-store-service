@@ -1,8 +1,8 @@
 package com.sleepy.goods.vo.goods;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
@@ -10,14 +10,17 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
- * 商品新建VO
+ * 商品更新VO
  *
  * @author gehoubao
- * @create 2020-02-21 15:38
+ * @create 2020-03-05 15:29
  **/
 @Data
-@ApiModel("商品新建VO")
-public class GoodsNewVO {
+public class GoodsUpdateVO {
+
+    @NotEmpty(message = "商品ID不能为空")
+    @ApiModelProperty("商品ID")
+    private String goodsId;
 
     @NotEmpty(message = "商品名称goodsName不能为空")
     @ApiModelProperty("商品名称")
@@ -35,6 +38,7 @@ public class GoodsNewVO {
     @ApiModelProperty("库存单位")
     private String storageUnit;
 
+    @NotEmpty
     @ApiModelProperty("商品描述")
     private String goodsDesc;
 
@@ -42,13 +46,27 @@ public class GoodsNewVO {
     @ApiModelProperty("图片地址")
     private String imgUrl;
 
+    @NotEmpty
+    @ApiModelProperty("详情图片地址，多个以逗号分隔")
+    private String detailImgUrl;
+
+    @NotNull
+    @DecimalMin(value = "0")
     @ApiModelProperty("商品会员价")
     private Double goodsPriceVip;
 
+    @NotNull
+    @DecimalMin(value = "0")
     @ApiModelProperty("商品原价")
     private Double goodsPriceOrigin;
 
-    @DecimalMin(value = "0", message = "商品折扣价goodsPriceOnSale不能为空")
+    @NotNull
+    @DecimalMin(value = "0")
     @ApiModelProperty("商品折扣价")
     private Double goodsPriceOnSale;
+
+    @NotNull
+    @Range(min = 0, max = 1)
+    @ApiModelProperty("价格状态，0原价，1折扣价")
+    private Integer priceStatus;
 }

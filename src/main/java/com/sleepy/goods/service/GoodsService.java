@@ -4,6 +4,7 @@ import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.vo.GoodsVO;
 import com.sleepy.goods.vo.goods.GoodsNewVO;
+import com.sleepy.goods.vo.goods.GoodsUpdateVO;
 
 /**
  * 商品服务Service
@@ -19,4 +20,6 @@ public interface GoodsService {
     CommonDTO<GoodsEntity> searchGoodsList(GoodsVO vo);
 
     CommonDTO<GoodsEntity> getByCategory(GoodsVO vo);
+
+    CommonDTO<GoodsEntity> updateGoods(GoodsUpdateVO vo);
 }

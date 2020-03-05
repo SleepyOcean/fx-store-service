@@ -10,6 +10,7 @@ import com.sleepy.goods.service.GoodsService;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.GoodsVO;
 import com.sleepy.goods.vo.goods.GoodsNewVO;
+import com.sleepy.goods.vo.goods.GoodsUpdateVO;
 import com.sleepy.jpql.JpqlExecutor;
 import com.sleepy.jpql.JpqlResultSet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,15 @@ public class GoodsServiceImpl implements GoodsService {
         List<CategoryEntity> goodsCategory = getGoodsCategory(1);
         result.setExtra(StringUtil.getNewExtraMap(new MapDTO("category", goodsCategory)));
         return result;
+    }
+
+    @Override
+    public CommonDTO<GoodsEntity> updateGoods(GoodsUpdateVO vo) {
+        GoodsEntity entity = goodsRepository.findById(vo.getGoodsId()).get();
+        entity.update(vo);
+        entity.setUpdateTime(StringUtil.getDateString(new Date()));
+        goodsRepository.saveAndFlush(entity);
+        return new CommonDTO<>();
     }
 
     private List<CategoryEntity> getGoodsCategory(int categoryCode) {

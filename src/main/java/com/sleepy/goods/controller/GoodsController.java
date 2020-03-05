@@ -2,12 +2,11 @@ package com.sleepy.goods.controller;
 
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.entity.GoodsEntity;
-import com.sleepy.goods.repository.CategoryRepository;
 import com.sleepy.goods.service.GoodsService;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.GoodsVO;
-import com.sleepy.goods.vo.category.CategoryNewVO;
 import com.sleepy.goods.vo.goods.GoodsNewVO;
+import com.sleepy.goods.vo.goods.GoodsUpdateVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -41,9 +40,6 @@ public class GoodsController {
         }
     }
 
-    @Autowired
-    CategoryRepository categoryRepository;
-
     @GetMapping("/getByCategory")
     public CommonDTO<GoodsEntity> getByCategory(@RequestParam("category") Integer category, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) throws Exception {
         GoodsVO vo = new GoodsVO();
@@ -53,14 +49,6 @@ public class GoodsController {
         return goodsService.getByCategory(vo);
     }
 
-    @PostMapping("/category")
-    public String getByCategory(@RequestBody CategoryNewVO vo) throws Exception {
-        vo.getList().forEach(entity -> {
-            categoryRepository.saveAndFlush(entity);
-        });
-        return "ok";
-    }
-
     @GetMapping("/search")
     public CommonDTO<GoodsEntity> search(@RequestParam("goodsName") String goodsName, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
         GoodsVO vo = new GoodsVO();
@@ -68,6 +56,11 @@ public class GoodsController {
         vo.setPage(page);
         vo.setPageSize(pageSize);
         return goodsService.searchGoodsList(vo);
+    }
+
+    @PostMapping("/update")
+    public CommonDTO<GoodsEntity> update(@RequestBody @Valid GoodsUpdateVO vo, BindingResult bindingResult) throws Exception {
+        return goodsService.updateGoods(vo);
     }
 
     @PostMapping("/save")
