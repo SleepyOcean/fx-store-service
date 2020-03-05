@@ -2,6 +2,7 @@ package com.sleepy.goods.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sleepy.goods.common.UserOperationIllegalException;
 import com.sleepy.goods.dto.MapDTO;
 
 import java.io.IOException;
@@ -55,7 +56,9 @@ public class StringUtil {
      */
     public static boolean stringsIsNotEmpty(String... strings) {
         for (String s : strings) {
-            if (isNullOrEmpty(s)) return false;
+            if (isNullOrEmpty(s)) {
+                return false;
+            }
         }
         return true;
     }
@@ -69,6 +72,17 @@ public class StringUtil {
      */
     public static boolean throwExceptionInfo(String info) throws Exception {
         throw new Exception(info);
+    }
+
+    /**
+     * 抛出用户操作的异常
+     *
+     * @param info
+     * @return
+     * @throws UserOperationIllegalException
+     */
+    public static boolean throwUserExceptionInfo(String info) throws UserOperationIllegalException {
+        throw new UserOperationIllegalException(info);
     }
 
     public static String formatDate(Date date, String format) {

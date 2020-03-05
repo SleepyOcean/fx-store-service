@@ -1,5 +1,7 @@
 package com.sleepy.goods.aop;
 
+import com.sleepy.goods.common.RestfulStatusCode;
+import com.sleepy.goods.common.UserOperationIllegalException;
 import com.sleepy.goods.dto.CommonDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -60,21 +62,25 @@ public class ControllerInterceptor {
         try {
             Long startTime = System.currentTimeMillis();
             result = (CommonDTO<Object>) point.proceed();
-            result.setStatus(200);
+            result.setStatus(RestfulStatusCode.OK);
             result.setTimeout((double) (System.currentTimeMillis() - startTime) / 1000);
+        } catch (UserOperationIllegalException e) {
+            result.setStatus(RestfulStatusCode.NOT_ACCEPTABLE);
+            result.setMessage(e.getMessage());
+            log.warn("用户操作非法：" + e.getMessage());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
-            result.setStatus(200);
+            result.setStatus(RestfulStatusCode.OK);
             result.setMessage("查询结果为空：" + e.getMessage());
             log.warn("数据库请求结果为空：" + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            result.setStatus(503);
+            result.setStatus(RestfulStatusCode.INTERNAL_SERVER_ERROR);
             result.setMessage(e.getMessage());
             log.error("serviceImpl异常：" + e.getMessage());
         } catch (Throwable throwable) {
             throwable.printStackTrace();
-            result.setStatus(503);
+            result.setStatus(RestfulStatusCode.INTERNAL_SERVER_ERROR);
             result.setMessage(throwable.getMessage());
             log.error("Controller拦截器异常：" + throwable.getMessage());
         }
