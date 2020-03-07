@@ -31,7 +31,6 @@ public class GoodsNewVO {
     @ApiModelProperty("库存剩余")
     private Integer storageNum;
 
-    @NotEmpty(message = "库存单位storageUnit不能为空")
     @ApiModelProperty("库存单位")
     private String storageUnit;
 
@@ -42,13 +41,17 @@ public class GoodsNewVO {
     @ApiModelProperty("图片地址")
     private String imgUrl;
 
+    @NotEmpty(message = "详情图片地址imgUrl不能为空")
+    @ApiModelProperty("详情图片地址")
+    private String detailImgUrl;
+
     @ApiModelProperty("商品会员价")
     private Double goodsPriceVip;
 
     @ApiModelProperty("商品原价")
     private Double goodsPriceOrigin;
 
-    @DecimalMin(value = "0", message = "商品折扣价goodsPriceOnSale不能为空")
-    @ApiModelProperty("商品折扣价")
-    private Double goodsPriceOnSale;
+    @DecimalMin(value = "0", message = "商品现价goodsPriceNow不能为空")
+    @ApiModelProperty("商品现价")
+    private Double goodsPriceNow;
 }

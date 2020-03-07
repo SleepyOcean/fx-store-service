@@ -38,7 +38,7 @@ public class GoodsUpdateVO {
     @ApiModelProperty("库存单位")
     private String storageUnit;
 
-    @NotEmpty
+    @NotEmpty(message = "商品描述不能为空")
     @ApiModelProperty("商品描述")
     private String goodsDesc;
 
@@ -46,27 +46,22 @@ public class GoodsUpdateVO {
     @ApiModelProperty("图片地址")
     private String imgUrl;
 
-    @NotEmpty
+//    @NotEmpty
     @ApiModelProperty("详情图片地址，多个以逗号分隔")
     private String detailImgUrl;
 
-    @NotNull
+//    @NotNull(message = "商品会员价不能为空")
     @DecimalMin(value = "0")
     @ApiModelProperty("商品会员价")
     private Double goodsPriceVip;
 
-    @NotNull
+    @NotNull(message = "商品原价不能为空")
     @DecimalMin(value = "0")
     @ApiModelProperty("商品原价")
     private Double goodsPriceOrigin;
 
-    @NotNull
+    @NotNull(message = "商品现价不能为空")
     @DecimalMin(value = "0")
-    @ApiModelProperty("商品折扣价")
-    private Double goodsPriceOnSale;
-
-    @NotNull
-    @Range(min = 0, max = 1)
-    @ApiModelProperty("价格状态，0原价，1折扣价")
-    private Integer priceStatus;
+    @ApiModelProperty("商品现价")
+    private Double goodsPriceNow;
 }

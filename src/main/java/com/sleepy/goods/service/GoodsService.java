@@ -15,7 +15,7 @@ import com.sleepy.goods.vo.goods.GoodsUpdateVO;
 public interface GoodsService {
     CommonDTO<GoodsEntity> getGoodsList(GoodsVO vo);
 
-    CommonDTO<GoodsEntity> saveGoodsList(GoodsNewVO vo) throws Exception;
+    CommonDTO<GoodsEntity> saveGoods(GoodsNewVO vo) throws Exception;
 
     CommonDTO<GoodsEntity> searchGoodsList(GoodsVO vo);
 

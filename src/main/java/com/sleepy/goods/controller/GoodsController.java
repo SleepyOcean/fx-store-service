@@ -65,7 +65,7 @@ public class GoodsController {
 
     @PostMapping("/save")
     public CommonDTO<GoodsEntity> save(@RequestBody @Valid GoodsNewVO vo, BindingResult bindingResult) throws Exception {
-        return goodsService.saveGoodsList(vo);
+        return goodsService.saveGoods(vo);
     }
 
     @PostMapping("/saveAll")
@@ -73,7 +73,7 @@ public class GoodsController {
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
         if (vo.getGoods() != null && vo.getGoods().size() > 0) {
             for (GoodsNewVO good : vo.getGoods()) {
-                goodsService.saveGoodsList(good);
+                goodsService.saveGoods(good);
             }
         } else {
             StringUtil.throwExceptionInfo("商品数组goods不能为空");

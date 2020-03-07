@@ -50,7 +50,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public CommonDTO<GoodsEntity> saveGoodsList(GoodsNewVO vo) throws Exception {
+    public CommonDTO<GoodsEntity> saveGoods(GoodsNewVO vo) throws Exception {
         GoodsEntity good = new GoodsEntity(vo);
         if (StringUtil.isNotNullOrEmpty(vo.getGoodsDesc())) {
             good.setGoodsDesc(vo.getGoodsDesc());
