@@ -19,6 +19,7 @@ import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
 import com.sleepy.goods.vo.order.OrderSearchVO;
+import com.sleepy.goods.vo.order.OrderStatisticVO;
 import com.sleepy.goods.vo.order.UpdateStatusVO;
 import com.sleepy.jpql.JpqlExecutor;
 import com.sleepy.jpql.JpqlResultSet;
@@ -250,6 +251,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public CommonDTO<OrderEntity> assignOrder(String status) {
+        return null;
+    }
+
+    @Override
+    public CommonDTO<String> statistic(OrderStatisticVO vo) {
         return null;
     }
 

@@ -23,4 +23,10 @@
         #end
         #end
     </jpql>
+    <jpql id="statistic">
+        select
+        count(order_id) , sum(total_price)
+        from fx_order where 1=1
+        order_time between :startTime and :endTime;
+    </jpql>
 </jpa>

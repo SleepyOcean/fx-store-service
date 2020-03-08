@@ -9,6 +9,7 @@ import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
 import com.sleepy.goods.vo.order.OrderSearchVO;
+import com.sleepy.goods.vo.order.OrderStatisticVO;
 import com.sleepy.goods.vo.order.UpdateStatusVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,9 +55,15 @@ public class OrderController {
         return orderService.getOrderByOrderId(orderId);
     }
 
+    @ApiOperation("获取指定用户订单列表")
+    @PostMapping("/order/statistic")
+    public CommonDTO<String> statistic(@RequestBody @Valid OrderStatisticVO vo, BindingResult bindingResult) {
+        return orderService.statistic(vo);
+    }
+
     @ApiOperation("更新订单状态")
     @PostMapping("/order/updateStatus")
-    public CommonDTO<OrderEntity> updateOrderStatus(@RequestBody @Valid UpdateStatusVO vo) {
+    public CommonDTO<OrderEntity> updateOrderStatus(@RequestBody @Valid UpdateStatusVO vo, BindingResult bindingResult) {
         return orderService.updateOrderStatus(vo);
     }
 
@@ -74,7 +81,7 @@ public class OrderController {
 
     @ApiOperation("购物车结算")
     @PostMapping("/cart/settlement")
-    public CommonDTO<SettlementDTO> settlement(@RequestBody @Valid CartSettlementVO vo) throws Exception {
+    public CommonDTO<SettlementDTO> settlement(@RequestBody @Valid CartSettlementVO vo, BindingResult bindingResult) throws Exception {
         return orderService.settlement(vo);
     }
 

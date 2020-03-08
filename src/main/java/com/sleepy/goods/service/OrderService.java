@@ -8,6 +8,7 @@ import com.sleepy.goods.vo.CartVO;
 import com.sleepy.goods.vo.cart.CartSettlementVO;
 import com.sleepy.goods.vo.order.OrderNewVO;
 import com.sleepy.goods.vo.order.OrderSearchVO;
+import com.sleepy.goods.vo.order.OrderStatisticVO;
 import com.sleepy.goods.vo.order.UpdateStatusVO;
 
 /**
@@ -34,4 +35,6 @@ public interface OrderService {
     CommonDTO<OrderEntity> updateOrderStatus(UpdateStatusVO vo);
 
     CommonDTO<OrderEntity> assignOrder(String status);
+
+    CommonDTO<String> statistic(OrderStatisticVO vo);
 }

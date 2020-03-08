@@ -10,6 +10,7 @@ import com.sleepy.goods.vo.user.AddressNewVO;
 import com.sleepy.goods.vo.user.AddressVO;
 import com.sleepy.goods.vo.user.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -60,7 +61,7 @@ public class UserController {
     }
 
     @PostMapping("/address/add")
-    public CommonDTO<AddressEntity> addAddress(@RequestBody @Valid AddressNewVO vo) throws Exception {
+    public CommonDTO<AddressEntity> addAddress(@RequestBody @Valid AddressNewVO vo, BindingResult bindingResult) throws Exception {
         return userService.addAddress(vo);
     }
 
@@ -70,12 +71,12 @@ public class UserController {
     }
 
     @PostMapping("/address/delete")
-    public CommonDTO<AddressEntity> deleteAddress(@RequestBody @Valid AddressDelVO vo) throws Exception {
+    public CommonDTO<AddressEntity> deleteAddress(@RequestBody @Valid AddressDelVO vo, BindingResult bindingResult) throws Exception {
         return userService.deleteAddress(vo);
     }
 
     @PostMapping("/address/setDefault")
-    public CommonDTO<AddressEntity> setDefaultAddress(@RequestBody @Valid AddressVO vo) throws Exception {
+    public CommonDTO<AddressEntity> setDefaultAddress(@RequestBody @Valid AddressVO vo, BindingResult bindingResult) throws Exception {
         return userService.setDefaultAddress(vo.getAddressId(), vo.getUserId());
     }
 
