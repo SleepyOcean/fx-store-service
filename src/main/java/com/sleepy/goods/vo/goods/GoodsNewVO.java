@@ -27,6 +27,10 @@ public class GoodsNewVO {
     @ApiModelProperty("商品分类")
     private Integer category;
 
+    @NotNull(message = "商品子分类subCategory不能为空")
+    @ApiModelProperty("商品子分类")
+    private Integer subCategory;
+
     @Min(value = 0, message = "库存剩余storageNum不能为空")
     @ApiModelProperty("库存剩余")
     private Integer storageNum;

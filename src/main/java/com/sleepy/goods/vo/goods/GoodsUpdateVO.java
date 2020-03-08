@@ -2,7 +2,6 @@ package com.sleepy.goods.vo.goods;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
@@ -29,6 +28,10 @@ public class GoodsUpdateVO {
     @NotNull(message = "商品分类category不能为空")
     @ApiModelProperty("商品分类")
     private Integer category;
+
+    @NotNull(message = "商品子分类subCategory不能为空")
+    @ApiModelProperty("商品子分类")
+    private Integer subCategory;
 
     @Min(value = 0, message = "库存剩余storageNum不能为空")
     @ApiModelProperty("库存剩余")

@@ -30,6 +30,9 @@ public class GoodsEntity {
     @Column(name = "category", columnDefinition = "TINYINT NOT NULL COMMENT '商品分类'")
     private Integer category;
 
+    @Column(name = "sub_category", columnDefinition = "TINYINT NOT NULL COMMENT '商品子分类'")
+    private Integer subCategory;
+
     @Column(name = "storage_num", columnDefinition = "INT NOT NULL COMMENT '库存剩余'")
     private Integer storageNum;
 
@@ -68,6 +71,7 @@ public class GoodsEntity {
         }
         this.goodsName = vo.getGoodsName();
         this.category = vo.getCategory();
+        this.subCategory = vo.getSubCategory();
         this.storageNum = vo.getStorageNum();
         this.imgUrl = vo.getImgUrl();
         this.detailImgUrl = vo.getDetailImgUrl();
@@ -81,6 +85,7 @@ public class GoodsEntity {
         this.goodsName = vo.getGoodsName();
         this.goodsDesc = vo.getGoodsDesc();
         this.category = vo.getCategory();
+        this.subCategory = vo.getSubCategory();
         this.imgUrl = vo.getImgUrl();
         this.detailImgUrl = vo.getDetailImgUrl();
         this.goodsPriceVip = vo.getGoodsPriceVip();
