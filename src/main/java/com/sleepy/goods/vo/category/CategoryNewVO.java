@@ -1,6 +1,5 @@
 package com.sleepy.goods.vo.category;
 
-import com.sleepy.goods.entity.CategoryEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,7 +15,7 @@ import java.util.List;
 @Data
 @ApiModel("分类新建VO")
 public class CategoryNewVO {
-    List<CategoryEntity> list;
+    List<CategoryNewVO> categories;
 
     //    @NotNull
     @ApiModelProperty("分类类型")
@@ -33,4 +32,13 @@ public class CategoryNewVO {
     //    @NotEmpty
     @ApiModelProperty("分类名称")
     private String categoryName;
+
+    @ApiModelProperty("分类图片url")
+    private String categoryImgUrl;
+
+    @ApiModelProperty("子分类信息")
+    private Object subCategoryObject;
+
+    @ApiModelProperty("子分类信息")
+    private String subCategory;
 }

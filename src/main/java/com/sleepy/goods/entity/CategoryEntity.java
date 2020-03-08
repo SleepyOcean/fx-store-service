@@ -1,5 +1,6 @@
 package com.sleepy.goods.entity;
 
+import com.sleepy.goods.vo.category.CategoryNewVO;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -33,6 +34,19 @@ public class CategoryEntity {
     @Column(name = "category_name", columnDefinition = "VARCHAR(256) NOT NULL COMMENT '分类名称'")
     private String categoryName;
 
-    @Column(name = "category_img_url", columnDefinition = "VARCHAR(256) NOT NULL COMMENT '分类图片url'")
+    @Column(name = "category_img_url", columnDefinition = "VARCHAR(256) COMMENT '分类图片url'")
     private String categoryImgUrl;
+
+    @Column(name = "sub_category", columnDefinition = "TEXT COMMENT '子分类信息'")
+    private String subCategory;
+
+    public CategoryEntity() {
+    }
+
+    public CategoryEntity(CategoryNewVO category) {
+        this.categoryType = category.getCategoryType();
+        this.categoryTypeName = category.getCategoryTypeName();
+        this.categoryCode = category.getCategoryCode();
+        this.categoryName = category.getCategoryName();
+    }
 }
