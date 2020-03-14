@@ -114,7 +114,7 @@ public class AdminServiceImpl implements AdminService {
     private String getWeixinOpenId(String wxCode) throws Exception {
         if (!StringUtil.isNullOrEmpty(wxCode)) {
             RestTemplate restTemplate = new RestTemplate();
-            String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + "wxffd0f17a532bf00b" + "&secret=" + "42690dadb85962bcf8382356099b9225" + "&js_code=" + wxCode + "&grant_type=" + wxCode;
+            String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + "wx07c1e4a472c50936" + "&secret=" + "e17ab601f0b47328da7d356be21c84da" + "&js_code=" + wxCode + "&grant_type=" + wxCode;
             String respond = HttpUtil.doGet(url);
             String openId = JSON.parseObject(respond).getString("openid");
             if (!StringUtil.isNullOrEmpty(openId)) {
