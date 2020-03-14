@@ -243,7 +243,7 @@ public class UserServiceImpl implements UserService {
     private String getWeixinOpenId(String wxCode) throws Exception {
         if (!StringUtil.isNullOrEmpty(wxCode)) {
             RestTemplate restTemplate = new RestTemplate();
-            String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + "wx8dfe7072afd33eaa" + "&secret=" + "f43ff7c674a0b751d5752c9f4f210bf9" + "&js_code=" + wxCode + "&grant_type=" + wxCode;
+            String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + "wx76fe2d27b974eb82" + "&secret=" + "ddd135c69b95a18b671a6f42235883e1" + "&js_code=" + wxCode + "&grant_type=" + wxCode;
             String respond = HttpUtil.doGet(url);
             String openId = JSON.parseObject(respond).getString("openid");
             if (!StringUtil.isNullOrEmpty(openId)) {
