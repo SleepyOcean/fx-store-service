@@ -21,6 +21,9 @@ public class GoodsVO {
     @ApiModelProperty("商品分类")
     private Integer category;
 
+    @ApiModelProperty("商品子分类")
+    private Integer subCategory;
+
     @ApiModelProperty("商品名称")
     private String goodsName;
 

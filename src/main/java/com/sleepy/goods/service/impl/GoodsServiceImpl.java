@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品服务实现ServiceImpl
@@ -38,12 +39,21 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public CommonDTO<GoodsEntity> getGoodsList(GoodsVO vo) {
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
-        JpqlResultSet resultSet = jpqlExecutor.exec("goods.findGoods",
-                StringUtil.newParamsMap(new MapDTO("limit", vo.getPageSize()),
-                        new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize())),
-                GoodsEntity.class);
-        result.setResultList(resultSet.getResultList());
-        result.setTotal(resultSet.getTotal());
+        Map<String, Object> params = StringUtil.newParamsMap(new MapDTO("limit", vo.getPageSize()),
+                new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize()));
+        if (vo.getCategory() != null) {
+            params.put("category", vo.getCategory());
+        }
+        if (vo.getSubCategory() != null) {
+            params.put("subCategory", vo.getSubCategory());
+        }
+        if (StringUtil.isNotNullOrEmpty(vo.getGoodsName())) {
+            params.put("goodsNameLike", "%" + vo.getGoodsName() + "%");
+        }
+        JpqlResultSet set = jpqlExecutor.exec("goods.findGoods", params, GoodsEntity.class);
+        List<GoodsEntity> data = set.getResultList();
+        result.setResultList(data);
+        result.setTotal(set.getTotal());
         List<CategoryEntity> goodsCategory = getGoodsCategory(1);
         result.setExtra(StringUtil.getNewExtraMap(new MapDTO("category", goodsCategory)));
         return result;
@@ -65,32 +75,6 @@ public class GoodsServiceImpl implements GoodsService {
         goodsRepository.save(good);
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
         result.setMessage("创建成功");
-        return result;
-    }
-
-    @Override
-    public CommonDTO<GoodsEntity> searchGoodsList(GoodsVO vo) {
-        CommonDTO<GoodsEntity> result = new CommonDTO<>();
-        JpqlResultSet set = jpqlExecutor.exec("goods.findGoods",
-                StringUtil.newParamsMap(new MapDTO("goodsNameLike", "%" + vo.getGoodsName() + "%"), new MapDTO("limit", vo.getPageSize()),
-                        new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize())), GoodsEntity.class);
-        List<GoodsEntity> data = set.getResultList();
-        result.setResultList(data);
-        result.setTotal(set.getTotal());
-        return result;
-    }
-
-    @Override
-    public CommonDTO<GoodsEntity> getByCategory(GoodsVO vo) {
-        CommonDTO<GoodsEntity> result = new CommonDTO<>();
-        JpqlResultSet set = jpqlExecutor.exec("goods.findGoods",
-                StringUtil.newParamsMap(new MapDTO("category", vo.getCategory()), new MapDTO("limit", vo.getPageSize()),
-                        new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize())), GoodsEntity.class);
-        List<GoodsEntity> data = set.getResultList();
-        result.setResultList(data);
-        result.setTotal(set.getTotal());
-        List<CategoryEntity> goodsCategory = getGoodsCategory(1);
-        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("category", goodsCategory)));
         return result;
     }
 

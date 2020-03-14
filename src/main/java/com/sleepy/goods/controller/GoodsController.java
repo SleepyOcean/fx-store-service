@@ -28,25 +28,27 @@ public class GoodsController {
     GoodsService goodsService;
 
     @GetMapping("/get")
-    public CommonDTO<GoodsEntity> get(@RequestParam(value = "category", required = false) Integer category, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
+    public CommonDTO<GoodsEntity> get(@RequestParam(value = "goodsName", required = false) String goodsName,
+                                      @RequestParam(value = "category", required = false) Integer category,
+                                      @RequestParam(value = "subCategory", required = false) Integer subCategory,
+                                      @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) throws Exception {
         GoodsVO vo = new GoodsVO();
         vo.setPage(page);
         vo.setPageSize(pageSize);
         if (category != null) {
             vo.setCategory(category);
-            return goodsService.getByCategory(vo);
-        } else {
-            return goodsService.getGoodsList(vo);
         }
-    }
-
-    @GetMapping("/search")
-    public CommonDTO<GoodsEntity> search(@RequestParam("goodsName") String goodsName, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
-        GoodsVO vo = new GoodsVO();
-        vo.setGoodsName(goodsName);
-        vo.setPage(page);
-        vo.setPageSize(pageSize);
-        return goodsService.searchGoodsList(vo);
+        if (subCategory != null) {
+            if (category != null) {
+                vo.setSubCategory(subCategory);
+            } else {
+                StringUtil.throwExceptionInfo("二级分类subCategory筛选必须填写一级分类category");
+            }
+        }
+        if (StringUtil.isNotNullOrEmpty(goodsName)) {
+            vo.setGoodsName(goodsName);
+        }
+        return goodsService.getGoodsList(vo);
     }
 
     @PostMapping("/update")

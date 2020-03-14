@@ -16,6 +16,9 @@
         #end
         #if($category)
         and category = :category
+        #if($subCategory)
+        and sub_category = :subCategory
+        #end
         #end
         #if(!$pageable)
         #if($limit)
