@@ -23,9 +23,14 @@ import com.sleepy.goods.vo.order.OrderStatisticVO;
 import com.sleepy.goods.vo.order.UpdateStatusVO;
 import com.sleepy.jpql.JpqlExecutor;
 import com.sleepy.jpql.JpqlResultSet;
+import io.searchbox.client.JestClient;
+import io.searchbox.client.JestResult;
+import io.searchbox.core.DocumentResult;
+import io.searchbox.core.Index;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,6 +42,10 @@ import java.util.stream.Collectors;
  **/
 @Service
 public class OrderServiceImpl implements OrderService {
+    private static final String ES_SO_STORE_ORDER_INDEX = "so_store_order_index";
+
+    @Autowired
+    JestClient jestClient;
 
     @Autowired
     UserRepository userRepository;
@@ -109,7 +118,9 @@ public class OrderServiceImpl implements OrderService {
             entity.setGoodsTotalPrice(goodsTotalPrice);
             entity.setTotalPrice(goodsTotalPrice);
             entity.setOrderTime(StringUtil.getDateString(new Date()));
-            result.setResult(orderRepository.saveAndFlush(entity));
+            OrderEntity order = orderRepository.saveAndFlush(entity);
+            save(order);
+            result.setResult(order);
 
             user.setCartInfo(JSON.toJSONString(carts));
             userRepository.saveAndFlush(user);
@@ -259,6 +270,12 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
+    public String save(OrderEntity order) throws IOException {
+        Index index = new Index.Builder(order).index(ES_SO_STORE_ORDER_INDEX).type("order").id(order.getOrderId()).build();
+        JestResult jestResult = jestClient.execute(index);
+
+        return ((DocumentResult) jestResult).getId();
+    }
 
     private CommonDTO<OrderEntity> getOrderDetailResult(List<OrderEntity> data) {
         CommonDTO<OrderEntity> result = new CommonDTO<>();

@@ -74,8 +74,8 @@ public class OrderEntity {
     @Column(name = "delivery_man_info", columnDefinition = "VARCHAR(64) COMMENT '配送人信息，手机号:配送人姓名'")
     private String deliveryManInfo;
 
-    @Column(name = "status", columnDefinition = "VARCHAR(255) COMMENT '订单状态，0订单正常，1订单取消，2订单删除'")
-    private String status;
+    @Column(name = "status", columnDefinition = "TINYINT COMMENT '订单状态，0订单正常，1订单取消，2订单删除'")
+    private Integer status;
 
     @Column(name = "comment", columnDefinition = "VARCHAR(255) COMMENT '订单备注'")
     private String comment;

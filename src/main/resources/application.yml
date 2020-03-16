@@ -19,6 +19,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
+  elasticsearch:
+    jest:
+      connection-timeout: 30000
+      multi-threaded: true
+      uris: http://es.sleepyocean.cn
+      read-timeout: 7200
 logging:
   level:
     root: warn
