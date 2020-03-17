@@ -234,4 +234,10 @@ public class StringUtil {
     public static Map<String, Object> newParamsMap(MapDTO... maps) {
         return getNewExtraMap(maps);
     }
+
+    public static Date getDateAgoFromNow(int amount) {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_YEAR, Math.negateExact(amount));
+        return c.getTime();
+    }
 }

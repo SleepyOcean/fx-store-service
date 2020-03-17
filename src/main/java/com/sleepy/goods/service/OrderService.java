@@ -36,5 +36,5 @@ public interface OrderService {
 
     CommonDTO<OrderEntity> assignOrder(String status);
 
-    CommonDTO<String> statistic(OrderStatisticVO vo);
+    CommonDTO<String> statistic(OrderStatisticVO vo) throws Exception;
 }
