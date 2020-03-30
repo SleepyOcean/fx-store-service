@@ -28,10 +28,11 @@ public interface UserService {
      * 通过微信Code获取用户信息
      *
      * @param code
+     * @param contact
      * @return
      * @throws Exception
      */
-    CommonDTO<UserDTO> getUserInfoByCode(String code) throws Exception;
+    CommonDTO<UserDTO> getUserInfoByCode(String code, String contact) throws Exception;
 
     /**
      * 保存用户信息
@@ -104,4 +105,11 @@ public interface UserService {
      */
     CommonDTO<AddressEntity> deleteAddress(AddressDelVO vo) throws Exception;
 
+    /**
+     * 商家验证
+     *
+     * @param vo
+     * @return
+     */
+    CommonDTO<UserDTO> merchantAuth(UserVO vo) throws Exception;
 }

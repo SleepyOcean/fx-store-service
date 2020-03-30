@@ -76,16 +76,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonDTO<UserDTO> getUserInfoByCode(String code) throws Exception {
+    public CommonDTO<UserDTO> getUserInfoByCode(String code, String contact) throws Exception {
         Map<String, Object> parameters = new HashMap<>(4);
         String openId = getWeixinOpenId(code);
         parameters.put("openId", openId);
         List<UserDTO> entities = findUser(parameters);
         if (entities.size() > 0) {
+            if (!contact.equals(entities.get(0))) {
+                UserEntity entity = userRepository.findByUserId(entities.get(0).getUserId()).get();
+                entity.setContact(contact);
+                userRepository.saveAndFlush(entity);
+            }
             return getUserDetailResult(entities);
         } else {
             UserVO vo = new UserVO();
             vo.setWxOpenId(openId);
+            vo.setContact(contact);
             return saveUser(vo);
         }
     }
@@ -106,6 +112,7 @@ public class UserServiceImpl implements UserService {
         } else {
             user.setUserName("微信用户" + openId.substring(3, 6));
         }
+        user.setContact(vo.getContact());
         UserEntity entity = userRepository.saveAndFlush(user);
         UserDTO data = new UserDTO();
         BeanUtils.copyProperties(entity, data);
@@ -123,6 +130,9 @@ public class UserServiceImpl implements UserService {
             user.setUserId(vo.getUserId());
             if (!StringUtil.isNullOrEmpty(vo.getUserName())) {
                 user.setUserName(vo.getUserName());
+            }
+            if (StringUtil.isNotNullOrEmpty(vo.getMerchantInfo())) {
+                user.setMerchantInfo(vo.getMerchantInfo());
             }
             UserEntity entity = userRepository.saveAndFlush(user);
             UserDTO data = new UserDTO();
@@ -229,6 +239,14 @@ public class UserServiceImpl implements UserService {
         } else {
             StringUtil.throwExceptionInfo("地址信息id集合deleteAddressIds不能为空");
         }
+        return result;
+    }
+
+    @Override
+    public CommonDTO<UserDTO> merchantAuth(UserVO vo) throws Exception {
+        // TODO 商家审核步骤
+        CommonDTO<UserDTO> result = new CommonDTO<>();
+        result.setMessage("上传成功。待审核。");
         return result;
     }
 

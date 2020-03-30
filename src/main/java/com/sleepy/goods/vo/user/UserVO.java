@@ -29,4 +29,6 @@ public class UserVO {
     private String contactName;
 
     private String contactAddress;
+
+    private String merchantInfo;
 }

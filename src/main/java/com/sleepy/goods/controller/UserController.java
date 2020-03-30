@@ -40,14 +40,24 @@ public class UserController {
     }
 
     @GetMapping("/getByCode")
-    public CommonDTO<UserDTO> getByCode(@RequestParam("code") String code) throws Exception {
-        if (!StringUtil.isNullOrEmpty(code)) {
-            return userService.getUserInfoByCode(code);
+    public CommonDTO<UserDTO> getByCode(@RequestParam("code") String code, @RequestParam("contact") String contact) throws Exception {
+        if (!StringUtil.isNullOrEmpty(code) && StringUtil.isNotNullOrEmpty(contact)) {
+            return userService.getUserInfoByCode(code, contact);
         } else {
             CommonDTO<UserDTO> result = new CommonDTO<>();
             result.setMessage("参数缺失，请检查是否传递了code");
             return result;
         }
+    }
+
+    @PostMapping("/merchantAuth")
+    public CommonDTO<UserDTO> merchantAuth(@RequestBody UserVO vo) throws Exception {
+        if (StringUtil.isNotNullOrEmpty(vo.getUserId()) && StringUtil.isNotNullOrEmpty(vo.getMerchantInfo())) {
+            return userService.merchantAuth(vo);
+        } else {
+            StringUtil.throwExceptionInfo("用户ID(userId)和商家信息(merchantInfo)不能为空");
+        }
+        return new CommonDTO<>();
     }
 
     @PostMapping("/save")
