@@ -27,6 +27,15 @@ import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.DocumentResult;
 import io.searchbox.core.Index;
+import io.searchbox.core.Search;
+import io.searchbox.core.SearchResult;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+import org.elasticsearch.search.aggregations.bucket.histogram.ExtendedBounds;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -119,7 +128,12 @@ public class OrderServiceImpl implements OrderService {
             entity.setTotalPrice(goodsTotalPrice);
             entity.setOrderTime(StringUtil.getDateString(new Date()));
             OrderEntity order = orderRepository.saveAndFlush(entity);
-            save(order);
+            try {
+                saveToEs(order);
+            } catch (IOException e) {
+                orderRepository.delete(entity);
+                StringUtil.throwExceptionInfo("创建订单失败，请检查ES存取操作");
+            }
             result.setResult(order);
 
             user.setCartInfo(JSON.toJSONString(carts));
@@ -266,11 +280,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public CommonDTO<String> statistic(OrderStatisticVO vo) {
-        return null;
+    public CommonDTO<String> statistic(OrderStatisticVO vo) throws Exception {
+        String startTime = StringUtil.getDateString(StringUtil.getDateAgoFromNow(vo.getStatisticDaysBefore()));
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        QueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        ((BoolQueryBuilder) boolQueryBuilder).must().addAll(
+                Arrays.asList(QueryBuilders.rangeQuery("orderTime").from(startTime)));
+        searchSourceBuilder.query(boolQueryBuilder);
+        searchSourceBuilder.size(0);
+        searchSourceBuilder.aggregation(AggregationBuilders.dateHistogram("day")
+                .field("orderTime").dateHistogramInterval(DateHistogramInterval.DAY).format("yyyy-MM-dd").minDocCount(0)
+                .extendedBounds(new ExtendedBounds(startTime.substring(0, 10), StringUtil.getDateString(new Date()).substring(0, 10)))
+                .subAggregation(AggregationBuilders.sum("amount").field("totalPrice")));
+        Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(ES_SO_STORE_ORDER_INDEX).addType("order").build();
+        List<Map<String, Object>> orderStatistic = new ArrayList<>();
+        List<Map<String, Object>> incomeStatistic = new ArrayList<>();
+        JestResult jestResult = null;
+        try {
+            jestResult = jestClient.execute(search);
+        } catch (IOException e) {
+            StringUtil.throwExceptionInfo("查询es失败: " + jestResult.getErrorMessage());
+        }
+        ((SearchResult) jestResult).getAggregations().getDateHistogramAggregation("day").getBuckets().
+                stream().forEach(o -> {
+            orderStatistic.add(StringUtil.getNewExtraMap(new MapDTO(o.getTimeAsString(), o.getCount())));
+            incomeStatistic.add(StringUtil.getNewExtraMap(new MapDTO(o.getTimeAsString(), o.getSumAggregation("amount").getSum())));
+        });
+        CommonDTO<String> result = new CommonDTO<>();
+        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("orderStatistic", orderStatistic), new MapDTO("incomeStatistic", incomeStatistic)));
+        return result;
     }
 
-    public String save(OrderEntity order) throws IOException {
+    public String saveToEs(OrderEntity order) throws IOException {
         Index index = new Index.Builder(order).index(ES_SO_STORE_ORDER_INDEX).type("order").id(order.getOrderId()).build();
         JestResult jestResult = jestClient.execute(index);
 

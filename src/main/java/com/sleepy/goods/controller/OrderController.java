@@ -33,7 +33,7 @@ public class OrderController {
     @Autowired
     OrderService orderService;
 
-    @ApiOperation("获取所有未完成的订单列表")
+    @ApiOperation("获取订单列表")
     @PostMapping("/order/list")
     public CommonDTO<OrderEntity> getOrderList(@RequestBody OrderSearchVO vo) {
         return orderService.getOrderListByCond(vo);
@@ -55,9 +55,9 @@ public class OrderController {
         return orderService.getOrderByOrderId(orderId);
     }
 
-    @ApiOperation("获取指定用户订单列表")
+    @ApiOperation("订单统计")
     @PostMapping("/order/statistic")
-    public CommonDTO<String> statistic(@RequestBody @Valid OrderStatisticVO vo, BindingResult bindingResult) {
+    public CommonDTO<String> statistic(@RequestBody @Valid OrderStatisticVO vo, BindingResult bindingResult) throws Exception {
         return orderService.statistic(vo);
     }
 
