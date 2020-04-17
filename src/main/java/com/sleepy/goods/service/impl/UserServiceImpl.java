@@ -84,14 +84,18 @@ public class UserServiceImpl implements UserService {
         if (entities.size() > 0) {
             if (!contact.equals(entities.get(0))) {
                 UserEntity entity = userRepository.findByUserId(entities.get(0).getUserId()).get();
-                entity.setContact(contact);
+                if (StringUtil.isNotNullOrEmpty(contact)) {
+                    entity.setContact(contact);
+                }
                 userRepository.saveAndFlush(entity);
             }
             return getUserDetailResult(entities);
         } else {
             UserVO vo = new UserVO();
             vo.setWxOpenId(openId);
-            vo.setContact(contact);
+            if (StringUtil.isNotNullOrEmpty(contact)) {
+                vo.setContact(contact);
+            }
             return saveUser(vo);
         }
     }
@@ -112,7 +116,9 @@ public class UserServiceImpl implements UserService {
         } else {
             user.setUserName("微信用户" + openId.substring(3, 6));
         }
-        user.setContact(vo.getContact());
+        if (StringUtil.isNotNullOrEmpty(vo.getContact())) {
+            user.setContact(vo.getContact());
+        }
         UserEntity entity = userRepository.saveAndFlush(user);
         UserDTO data = new UserDTO();
         BeanUtils.copyProperties(entity, data);
@@ -131,8 +137,8 @@ public class UserServiceImpl implements UserService {
             if (!StringUtil.isNullOrEmpty(vo.getUserName())) {
                 user.setUserName(vo.getUserName());
             }
-            if (StringUtil.isNotNullOrEmpty(vo.getMerchantInfo())) {
-                user.setMerchantInfo(vo.getMerchantInfo());
+            if (StringUtil.isNotNullOrEmpty(vo.getMerchantInfo().toString())) {
+                user.setMerchantInfo(vo.getMerchantInfo().toString());
             }
             UserEntity entity = userRepository.saveAndFlush(user);
             UserDTO data = new UserDTO();

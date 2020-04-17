@@ -1,5 +1,6 @@
 package com.sleepy.goods.vo.user;
 
+import com.sleepy.goods.dto.MerchantInfoDTO;
 import lombok.Data;
 
 /**
@@ -30,5 +31,5 @@ public class UserVO {
 
     private String contactAddress;
 
-    private String merchantInfo;
+    private MerchantInfoDTO merchantInfo;
 }

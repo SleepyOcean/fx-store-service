@@ -40,8 +40,8 @@ public class UserController {
     }
 
     @GetMapping("/getByCode")
-    public CommonDTO<UserDTO> getByCode(@RequestParam("code") String code, @RequestParam("contact") String contact) throws Exception {
-        if (!StringUtil.isNullOrEmpty(code) && StringUtil.isNotNullOrEmpty(contact)) {
+    public CommonDTO<UserDTO> getByCode(@RequestParam("code") String code, @RequestParam(value = "contact", required = false) String contact) throws Exception {
+        if (!StringUtil.isNullOrEmpty(code)) {
             return userService.getUserInfoByCode(code, contact);
         } else {
             CommonDTO<UserDTO> result = new CommonDTO<>();
@@ -52,7 +52,7 @@ public class UserController {
 
     @PostMapping("/merchantAuth")
     public CommonDTO<UserDTO> merchantAuth(@RequestBody UserVO vo) throws Exception {
-        if (StringUtil.isNotNullOrEmpty(vo.getUserId()) && StringUtil.isNotNullOrEmpty(vo.getMerchantInfo())) {
+        if (StringUtil.isNotNullOrEmpty(vo.getUserId()) && StringUtil.isNotNullOrEmpty(vo.getMerchantInfo().toString())) {
             return userService.merchantAuth(vo);
         } else {
             StringUtil.throwExceptionInfo("用户ID(userId)和商家信息(merchantInfo)不能为空");

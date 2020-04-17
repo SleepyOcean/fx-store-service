@@ -22,4 +22,7 @@ public class UserDTO {
 
     @Column(name = "cart_info", columnDefinition = "text")
     private String cartInfo;
+
+    @Column(name = "merchant_info", columnDefinition = "text")
+    private String merchantInfo;
 }
