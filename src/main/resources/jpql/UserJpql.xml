@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <jpa module="user">
     <jpql id="findUser">
-        select user_id, user_name, cart_info from fx_user where 1=1
+        select user_id, user_name, cart_info, merchant_info from fx_user where 1=1
         #if($userId)
         and user_id = :userId
         #end

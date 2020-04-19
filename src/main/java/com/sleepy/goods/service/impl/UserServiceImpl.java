@@ -2,10 +2,7 @@ package com.sleepy.goods.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.sleepy.goods.dto.CartDTO;
-import com.sleepy.goods.dto.CommonDTO;
-import com.sleepy.goods.dto.MapDTO;
-import com.sleepy.goods.dto.UserDTO;
+import com.sleepy.goods.dto.*;
 import com.sleepy.goods.entity.AddressEntity;
 import com.sleepy.goods.entity.GoodsEntity;
 import com.sleepy.goods.entity.UserEntity;
@@ -82,13 +79,11 @@ public class UserServiceImpl implements UserService {
         parameters.put("openId", openId);
         List<UserDTO> entities = findUser(parameters);
         if (entities.size() > 0) {
-            if (!contact.equals(entities.get(0))) {
-                UserEntity entity = userRepository.findByUserId(entities.get(0).getUserId()).get();
-                if (StringUtil.isNotNullOrEmpty(contact)) {
-                    entity.setContact(contact);
-                }
-                userRepository.saveAndFlush(entity);
+            UserEntity entity = userRepository.findByUserId(entities.get(0).getUserId()).get();
+            if (StringUtil.isNotNullOrEmpty(contact)) {
+                entity.setContact(contact);
             }
+            userRepository.saveAndFlush(entity);
             return getUserDetailResult(entities);
         } else {
             UserVO vo = new UserVO();
@@ -252,6 +247,16 @@ public class UserServiceImpl implements UserService {
     public CommonDTO<UserDTO> merchantAuth(UserVO vo) throws Exception {
         // TODO 商家审核步骤
         CommonDTO<UserDTO> result = new CommonDTO<>();
+        UserEntity entity;
+        if (StringUtil.isNotNullOrEmpty(vo.getUserId())) {
+            entity = userRepository.findByUserId(vo.getUserId()).get();
+            MerchantInfoDTO merchantInfo = vo.getMerchantInfo();
+            merchantInfo.setCheckStatus(0);
+            entity.setMerchantInfo(merchantInfo.toString());
+            userRepository.saveAndFlush(entity);
+        } else {
+            StringUtil.throwUserExceptionInfo("用户id不能为空！");
+        }
         result.setMessage("上传成功。待审核。");
         return result;
     }

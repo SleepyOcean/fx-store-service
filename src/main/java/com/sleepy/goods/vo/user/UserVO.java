@@ -24,11 +24,8 @@ public class UserVO {
     private String orderList;
 
     private String addressId;
-
     private String contact;
-
     private String contactName;
-
     private String contactAddress;
 
     private MerchantInfoDTO merchantInfo;

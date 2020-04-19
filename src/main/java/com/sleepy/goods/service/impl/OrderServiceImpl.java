@@ -73,9 +73,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public CommonDTO<OrderEntity> getOrderListByUserId(OrderSearchVO vo) {
-        JpqlResultSet set = jpqlExecutor.exec("order.findOrder",
-                StringUtil.newParamsMap(new MapDTO("userId", vo.getUserId()), new MapDTO("limit", vo.getPageSize()),
-                        new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize())), OrderEntity.class);
+        Map<String, Object> params = StringUtil.newParamsMap(new MapDTO("userId", vo.getUserId()), new MapDTO("limit", vo.getPageSize()),
+                new MapDTO("offset", (vo.getPage() - 1) * vo.getPageSize()));
+        if (vo.getDeliveryStatus() != null) {
+            params.put("deliveryStatus", vo.getDeliveryStatus().toString());
+        }
+        JpqlResultSet set = jpqlExecutor.exec("order.findOrder", params, OrderEntity.class);
         List<OrderEntity> data = set.getResultList();
         CommonDTO<OrderEntity> result = getOrderDetailResult(data);
         return result;
