@@ -27,6 +27,13 @@ public class GoodsController {
     @Autowired
     GoodsService goodsService;
 
+
+    @GetMapping("/recommend")
+    public CommonDTO<GoodsEntity> recommend(@RequestParam(value = "userId", required = false) String userId,
+                                            @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) throws Exception {
+        return new CommonDTO<>();
+    }
+
     @GetMapping("/get")
     public CommonDTO<GoodsEntity> get(@RequestParam(value = "goodsName", required = false) String goodsName,
                                       @RequestParam(value = "category", required = false) Integer category,

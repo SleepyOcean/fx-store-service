@@ -30,8 +30,10 @@ public class MerchantInfoDTO {
     private String shopPic;
     @ApiModelProperty("营业执照")
     private String businessLicense;
-    @ApiModelProperty("审核状态，0-未审核，1-审核通过")
+    @ApiModelProperty("审核状态，0-审核中，1-审核通过，2-审核失败")
     private Integer checkStatus;
+    @ApiModelProperty("商家信息状态，0-审核中，1-审核通过")
+    private Integer deleteFlag;
 
     @Override
     public String toString() {
