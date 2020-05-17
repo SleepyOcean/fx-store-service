@@ -31,7 +31,10 @@ public class GoodsController {
     @GetMapping("/recommend")
     public CommonDTO<GoodsEntity> recommend(@RequestParam(value = "userId", required = false) String userId,
                                             @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) throws Exception {
-        return new CommonDTO<>();
+        GoodsVO vo = new GoodsVO();
+        vo.setPage(page);
+        vo.setPageSize(pageSize);
+        return goodsService.getGoodsList(vo);
     }
 
     @GetMapping("/get")

@@ -6,7 +6,10 @@ import com.sleepy.goods.vo.goods.GoodsUpdateVO;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * 商品实体类
@@ -20,11 +23,13 @@ import javax.persistence.*;
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class GoodsEntity {
     @Id
-    @GeneratedValue(generator = "jpa-uuid")
     @Column(length = 64)
     private String goodsId;
 
-    @Column(name = "goods_name", columnDefinition = "VARCHAR(256) NOT NULL COMMENT '商品名称'")
+    @Column(name = "goods_spec", columnDefinition = "TEXT COMMENT '商品规格，json对象'")
+    private String goodsSpec;
+
+    @Column(name = "goods_spec", columnDefinition = "VARCHAR(256) NOT NULL COMMENT '商品名称'")
     private String goodsName;
 
     @Column(name = "category", columnDefinition = "TINYINT NOT NULL COMMENT '商品分类'")
@@ -64,6 +69,7 @@ public class GoodsEntity {
     private String updateTime;
 
     public GoodsEntity(GoodsNewVO vo) {
+        this();
         if(StringUtil.isNotNullOrEmpty(vo.getStorageUnit())){
             this.storageUnit = vo.getStorageUnit();
         } else {

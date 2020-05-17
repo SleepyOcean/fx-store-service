@@ -25,6 +25,9 @@ import java.util.regex.Pattern;
 public class StringUtil {
     public static final Pattern CHINESE_PATTERN = Pattern.compile("[\u4e00-\u9fa5]");
 
+    public static final String DATE_DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_STRING_FORMAT = "yyyyMMddHHmmss";
+
     /**
      * 判断字符串是否为空
      *
@@ -91,7 +94,7 @@ public class StringUtil {
     }
 
     public static String getDateString(Date date) {
-        return formatDate(date, "yyyy-MM-dd HH:mm:ss");
+        return formatDate(date, DATE_DEFAULT_FORMAT);
     }
 
     /**
@@ -240,4 +243,9 @@ public class StringUtil {
         c.add(Calendar.DAY_OF_YEAR, Math.negateExact(amount));
         return c.getTime();
     }
+
+    public static String generateGoodsId() {
+        return StringUtil.getRandomUuid("").substring(0, 46) + StringUtil.formatDate(new Date(), StringUtil.DATE_STRING_FORMAT) + "0000";
+    }
+
 }

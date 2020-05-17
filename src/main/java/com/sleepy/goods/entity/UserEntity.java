@@ -25,7 +25,7 @@ public class UserEntity {
     @Column(name = "user_name", columnDefinition = "VARCHAR(64) NOT NULL COMMENT '用户名称'")
     private String userName;
 
-    @Column(name = "contact", columnDefinition = "VARCHAR(32) NOT NULL COMMENT '手机号码'")
+    @Column(name = "contact", columnDefinition = "VARCHAR(32) COMMENT '手机号码'")
     private String contact;
 
     @Column(name = "cart_info", columnDefinition = "text COMMENT '购物车信息：{goodsId: {goodsId, selectedNum} ...}'")

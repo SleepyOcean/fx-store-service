@@ -72,6 +72,7 @@ public class GoodsServiceImpl implements GoodsService {
             good.setGoodsPriceVip(vo.getGoodsPriceVip());
         }
         good.setUpdateTime(StringUtil.getDateString(new Date()));
+        good.setGoodsId(StringUtil.generateGoodsId());
         goodsRepository.save(good);
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
         result.setMessage("创建成功");
