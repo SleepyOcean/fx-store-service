@@ -12,12 +12,17 @@ import lombok.Data;
 @Data
 public class CartDTO {
 
-    private String goodsId;
+    private Long goodsSpecId;
 
-    private String selectedNum;
+    private Integer selectedNum;
+
+    public CartDTO(Long specId) {
+        this.goodsSpecId = specId;
+        this.selectedNum = 0;
+    }
 
     @Override
     public String toString() {
-        return goodsId + Constant.PROPERTY_SPLIT_SYMBOL + selectedNum;
+        return goodsSpecId + Constant.PROPERTY_SPLIT_SYMBOL + selectedNum;
     }
 }

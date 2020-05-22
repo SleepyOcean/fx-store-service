@@ -2,11 +2,12 @@ package com.sleepy.goods.controller;
 
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.entity.GoodsEntity;
+import com.sleepy.goods.entity.GoodsSpecEntity;
+import com.sleepy.goods.entity.GoodsSpecKeyEntity;
+import com.sleepy.goods.entity.GoodsSpecValueEntity;
 import com.sleepy.goods.service.GoodsService;
 import com.sleepy.goods.util.StringUtil;
-import com.sleepy.goods.vo.GoodsVO;
-import com.sleepy.goods.vo.goods.GoodsNewVO;
-import com.sleepy.goods.vo.goods.GoodsUpdateVO;
+import com.sleepy.goods.vo.goods.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +63,7 @@ public class GoodsController {
     }
 
     @PostMapping("/update")
-    public CommonDTO<GoodsEntity> update(@RequestBody @Valid GoodsUpdateVO vo, BindingResult bindingResult) throws Exception {
+    public CommonDTO<GoodsEntity> update(@RequestBody @Valid GoodsVO vo, BindingResult bindingResult) throws Exception {
         return goodsService.updateGoods(vo);
     }
 
@@ -72,7 +73,7 @@ public class GoodsController {
     }
 
     @PostMapping("/saveAll")
-    public CommonDTO<GoodsEntity> saveAll(@RequestBody GoodsVO vo, BindingResult bindingResult) throws Exception {
+    public CommonDTO<GoodsEntity> saveAll(@RequestBody @Valid GoodsVO vo, BindingResult bindingResult) throws Exception {
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
         if (vo.getGoods() != null && vo.getGoods().size() > 0) {
             for (GoodsNewVO good : vo.getGoods()) {
@@ -83,5 +84,50 @@ public class GoodsController {
         }
         result.setMessage("创建成功");
         return result;
+    }
+
+    @PostMapping("/spec/add")
+    public CommonDTO<GoodsSpecEntity> saveSpec(@RequestBody @Valid GoodsSpecNewVO vo, BindingResult bindingResult) throws Exception {
+        return goodsService.saveSpec(vo);
+    }
+
+    @PostMapping("/spec/update")
+    public CommonDTO<GoodsSpecEntity> updateSpec(@RequestBody @Valid GoodsSpecVO vo, BindingResult bindingResult) throws Exception {
+        return goodsService.updateSpec(vo);
+    }
+
+    @PostMapping("/spec/delete")
+    public CommonDTO<GoodsSpecEntity> deleteSpec(@RequestBody @Valid GoodsSpecVO vo, BindingResult bindingResult) throws Exception {
+        return goodsService.deleteSpec(vo);
+    }
+
+    @PostMapping("/spec/key/add")
+    public CommonDTO<GoodsSpecKeyEntity> saveSpecKey(@RequestBody @Valid GoodsSpecNewKeyVO vo, BindingResult bindingResult) throws Exception {
+        return goodsService.saveSpecKey(vo);
+    }
+
+    @PostMapping("/spec/key/update")
+    public CommonDTO<GoodsSpecKeyEntity> updateSpecKey(@RequestBody @Valid GoodsSpecKeyVO vo, BindingResult bindingResult) throws Exception {
+        return goodsService.updateSpecKey(vo);
+    }
+
+    @PostMapping("/spec/key/delete")
+    public CommonDTO<GoodsSpecKeyEntity> deleteSpecKey(@RequestBody @Valid GoodsSpecKeyVO vo, BindingResult bindingResult) throws Exception {
+        return goodsService.deleteSpecKey(vo);
+    }
+
+    @PostMapping("/spec/value/add")
+    public CommonDTO<GoodsSpecValueEntity> saveSpecValue(@RequestBody @Valid GoodsSpecNewValueVO vo, BindingResult bindingResult) throws Exception {
+        return goodsService.saveSpecValue(vo);
+    }
+
+    @PostMapping("/spec/value/update")
+    public CommonDTO<GoodsSpecValueEntity> updateSpecValue(@RequestBody @Valid GoodsSpecValueVO vo, BindingResult bindingResult) throws Exception {
+        return goodsService.updateSpecValue(vo);
+    }
+
+    @PostMapping("/spec/value/delete")
+    public CommonDTO<GoodsSpecValueEntity> deleteSpecValue(@RequestBody @Valid GoodsSpecValueVO vo, BindingResult bindingResult) throws Exception {
+        return goodsService.deleteSpecValue(vo);
     }
 }

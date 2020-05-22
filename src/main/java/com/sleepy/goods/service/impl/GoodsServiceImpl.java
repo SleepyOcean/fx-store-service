@@ -2,23 +2,23 @@ package com.sleepy.goods.service.impl;
 
 import com.sleepy.goods.dto.CommonDTO;
 import com.sleepy.goods.dto.MapDTO;
-import com.sleepy.goods.entity.CategoryEntity;
-import com.sleepy.goods.entity.GoodsEntity;
+import com.sleepy.goods.entity.*;
 import com.sleepy.goods.repository.CategoryRepository;
 import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.service.GoodsService;
+import com.sleepy.goods.source.DataSourceGetter;
+import com.sleepy.goods.source.DataSourceSetter;
+import com.sleepy.goods.util.ClassUtil;
 import com.sleepy.goods.util.StringUtil;
-import com.sleepy.goods.vo.GoodsVO;
-import com.sleepy.goods.vo.goods.GoodsNewVO;
-import com.sleepy.goods.vo.goods.GoodsUpdateVO;
+import com.sleepy.goods.vo.goods.*;
 import com.sleepy.jpql.JpqlExecutor;
 import com.sleepy.jpql.JpqlResultSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 商品服务实现ServiceImpl
@@ -35,6 +35,10 @@ public class GoodsServiceImpl implements GoodsService {
     GoodsRepository goodsRepository;
     @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
+    DataSourceSetter dataSourceSetter;
+    @Autowired
+    DataSourceGetter dataSourceGetter;
 
     @Override
     public CommonDTO<GoodsEntity> getGoodsList(GoodsVO vo) {
@@ -52,10 +56,12 @@ public class GoodsServiceImpl implements GoodsService {
         }
         JpqlResultSet set = jpqlExecutor.exec("goods.findGoods", params, GoodsEntity.class);
         List<GoodsEntity> data = set.getResultList();
+        List<Long> goodsIds = data.stream().map(g -> g.getGoodsId()).collect(Collectors.toList());
+        Map<Long, List<GoodsSpecEntity>> goodSpecListMap = dataSourceGetter.getGoodSpecListMap(goodsIds);
         result.setResultList(data);
         result.setTotal(set.getTotal());
         List<CategoryEntity> goodsCategory = getGoodsCategory(1);
-        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("category", goodsCategory)));
+        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("category", goodsCategory), new MapDTO("goodsSpec", goodSpecListMap)));
         return result;
     }
 
@@ -65,27 +71,103 @@ public class GoodsServiceImpl implements GoodsService {
         if (StringUtil.isNotNullOrEmpty(vo.getGoodsDesc())) {
             good.setGoodsDesc(vo.getGoodsDesc());
         }
-        if (vo.getGoodsPriceOrigin() != null) {
-            good.setGoodsPriceOrigin(vo.getGoodsPriceOrigin());
-        }
-        if (vo.getGoodsPriceVip() != null) {
-            good.setGoodsPriceVip(vo.getGoodsPriceVip());
-        }
-        good.setUpdateTime(StringUtil.getDateString(new Date()));
-        good.setGoodsId(StringUtil.generateGoodsId());
-        goodsRepository.save(good);
+        good = dataSourceSetter.saveGood(good);
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
         result.setMessage("创建成功");
         return result;
     }
 
     @Override
-    public CommonDTO<GoodsEntity> updateGoods(GoodsUpdateVO vo) {
-        GoodsEntity entity = goodsRepository.findById(vo.getGoodsId()).get();
-        entity.update(vo);
-        entity.setUpdateTime(StringUtil.getDateString(new Date()));
-        goodsRepository.saveAndFlush(entity);
+    public CommonDTO<GoodsEntity> updateGoods(GoodsVO vo) {
+        GoodsEntity entity = dataSourceGetter.getGoods(vo.getGoodsId());
+        ClassUtil.updateValue(vo, entity);
+        dataSourceSetter.saveGood(entity);
         return new CommonDTO<>();
+    }
+
+    @Override
+    public CommonDTO<GoodsSpecEntity> saveSpec(GoodsSpecNewVO vo) {
+        GoodsSpecEntity entity = new GoodsSpecEntity(vo);
+        entity = dataSourceSetter.saveGoodSpec(entity);
+        CommonDTO<GoodsSpecEntity> result = new CommonDTO<>();
+        result.setResult(entity);
+        return result;
+    }
+
+    @Override
+    public CommonDTO<GoodsSpecEntity> updateSpec(GoodsSpecVO vo) {
+        GoodsSpecEntity entity = dataSourceGetter.getGoodSpec(vo.getSpecId());
+        ClassUtil.updateValue(vo, entity);
+        entity = dataSourceSetter.saveGoodSpec(entity);
+        CommonDTO<GoodsSpecEntity> result = new CommonDTO<>();
+        result.setResult(entity);
+        return result;
+    }
+
+    @Override
+    public CommonDTO<GoodsSpecEntity> deleteSpec(GoodsSpecVO vo) {
+        CommonDTO<GoodsSpecEntity> result = new CommonDTO<>();
+        dataSourceSetter.deleteGoodSpec(vo.getSpecId());
+        result.setMessage("【商品规格】删除成功");
+        return result;
+    }
+
+    @Override
+    public CommonDTO<GoodsSpecKeyEntity> saveSpecKey(GoodsSpecNewKeyVO vo) {
+        GoodsSpecKeyEntity entity = new GoodsSpecKeyEntity(vo);
+        entity = dataSourceSetter.saveGoodSpecKey(entity);
+        CommonDTO<GoodsSpecKeyEntity> result = new CommonDTO<>();
+        result.setResult(entity);
+        return result;
+    }
+
+    @Override
+    public CommonDTO<GoodsSpecKeyEntity> updateSpecKey(GoodsSpecKeyVO vo) {
+        GoodsSpecKeyEntity entity = dataSourceGetter.getGoodSpecKey(vo.getSpecKeyId());
+        if (StringUtil.isNotNullOrEmpty(vo.getSpecName())) {
+            entity.setSpecName(vo.getSpecName());
+        }
+        entity = dataSourceSetter.saveGoodSpecKey(entity);
+        CommonDTO<GoodsSpecKeyEntity> result = new CommonDTO<>();
+        result.setResult(entity);
+        return result;
+    }
+
+    @Override
+    public CommonDTO<GoodsSpecKeyEntity> deleteSpecKey(GoodsSpecKeyVO vo) {
+        CommonDTO<GoodsSpecKeyEntity> result = new CommonDTO<>();
+        dataSourceSetter.deleteGoodSpecKey(vo.getSpecKeyId());
+        result.setMessage("【商品规格Key】删除成功");
+        return result;
+    }
+
+    @Override
+    public CommonDTO<GoodsSpecValueEntity> saveSpecValue(GoodsSpecNewValueVO vo) {
+        GoodsSpecValueEntity entity = new GoodsSpecValueEntity(vo);
+        entity = dataSourceSetter.saveGoodSpecValue(entity);
+        CommonDTO<GoodsSpecValueEntity> result = new CommonDTO<>();
+        result.setResult(entity);
+        return result;
+    }
+
+    @Override
+    public CommonDTO<GoodsSpecValueEntity> updateSpecValue(GoodsSpecValueVO vo) {
+        GoodsSpecValueEntity entity = dataSourceGetter.getGoodSpecValue(vo.getSpecValueId());
+        if (StringUtil.isNotNullOrEmpty(vo.getSpecValue())) {
+            entity.setSpecValue(vo.getSpecValue());
+        }
+        entity = dataSourceSetter.saveGoodSpecValue(entity);
+        CommonDTO<GoodsSpecValueEntity> result = new CommonDTO<>();
+        result.setResult(entity);
+        return result;
+    }
+
+    @Override
+    public CommonDTO<GoodsSpecValueEntity> deleteSpecValue(GoodsSpecValueVO vo) {
+        CommonDTO<GoodsSpecValueEntity> result = new CommonDTO<>();
+        dataSourceSetter.deleteGoodSpecValue(vo.getSpecValueId());
+        result.setMessage("【商品规格Value】删除成功");
+        return result;
     }
 
     private List<CategoryEntity> getGoodsCategory(int categoryCode) {

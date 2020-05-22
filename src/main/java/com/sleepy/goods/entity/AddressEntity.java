@@ -2,7 +2,6 @@ package com.sleepy.goods.entity;
 
 import com.sleepy.goods.vo.user.AddressNewVO;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -15,14 +14,13 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "fx_address")
-@GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class AddressEntity {
     @Id
-    @GeneratedValue(generator = "jpa-uuid")
-    @Column(length = 64)
-    private String addressId;
-    @Column(name = "user_id", columnDefinition = "VARCHAR(64) COMMENT '用户id'")
-    private String userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    private long addressId;
+    @Column(name = "user_id", columnDefinition = "INT COMMENT '用户id'")
+    private long userId;
     @Column(name = "contact", columnDefinition = "VARCHAR(32) COMMENT '收货人联系方式'")
     private String contact;
     @Column(name = "contact_name", columnDefinition = "VARCHAR(64) COMMENT '收货人姓名'")
@@ -37,11 +35,15 @@ public class AddressEntity {
     private String addressStreet;
     @Column(name = "contact_address", columnDefinition = "VARCHAR(256) COMMENT '收货人详细地址'")
     private String contactAddress;
+    @Column(name = "deleted", columnDefinition = "TINYINT NOT NULL COMMENT '是否有效， 0-默认，1-已删除'")
+    private Integer deleted;
 
     public AddressEntity() {
+        this.deleted = 0;
     }
 
     public AddressEntity(AddressNewVO vo) {
+        this();
         this.userId = vo.getUserId();
         this.contact = vo.getContact();
         this.contactName = vo.getContactName();

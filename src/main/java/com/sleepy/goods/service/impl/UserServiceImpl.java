@@ -11,6 +11,7 @@ import com.sleepy.goods.repository.GoodsRepository;
 import com.sleepy.goods.repository.OrderRepository;
 import com.sleepy.goods.repository.UserRepository;
 import com.sleepy.goods.service.UserService;
+import com.sleepy.goods.source.DataSourceGetter;
 import com.sleepy.goods.util.HttpUtil;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.user.AddressDelVO;
@@ -43,10 +44,13 @@ public class UserServiceImpl implements UserService {
     AddressRepository addressRepository;
 
     @Autowired
+    DataSourceGetter dataSourceGetter;
+
+    @Autowired
     JpqlExecutor jpqlExecutor;
 
     @Override
-    public CommonDTO<UserDTO> getUserInfoById(String id) {
+    public CommonDTO<UserDTO> getUserInfoById(long id) {
         Map<String, Object> parameters = new HashMap<>(4);
         parameters.put("userId", id);
         List<UserDTO> entities = findUser(parameters);
@@ -59,7 +63,7 @@ public class UserServiceImpl implements UserService {
         String cartString = data.getCartInfo();
         if (StringUtil.isNotNullOrEmpty(cartString)) {
             JSONObject carts = JSON.parseObject(cartString);
-            Map<String, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
+            Map<Long, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
             List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(cartsMap.keySet()));
             result.setExtra(StringUtil.getNewExtraMap(new MapDTO("goods", goods),
                     new MapDTO("carts", new ArrayList<>(cartsMap.values())),
@@ -79,7 +83,7 @@ public class UserServiceImpl implements UserService {
         parameters.put("openId", openId);
         List<UserDTO> entities = findUser(parameters);
         if (entities.size() > 0) {
-            UserEntity entity = userRepository.findByUserId(entities.get(0).getUserId()).get();
+            UserEntity entity = dataSourceGetter.getUser(entities.get(0).getUserId());
             if (StringUtil.isNotNullOrEmpty(contact)) {
                 entity.setContact(contact);
             }
@@ -161,10 +165,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonDTO<AddressEntity> getAddressInfo(String addressId, String userId) throws Exception {
+    public CommonDTO<AddressEntity> getAddressInfo(long addressId, long userId) throws Exception {
         CommonDTO<AddressEntity> result = new CommonDTO<>();
         AddressEntity entity = addressRepository.findById(addressId).get();
-        if (entity.getUserId().equals(userId)) {
+        if (entity.getUserId() == userId) {
             result.setResult(entity);
         } else {
             StringUtil.throwExceptionInfo("userId与地址信息不匹配");
@@ -173,7 +177,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonDTO<AddressEntity> getAddressInfoByUserId(String userId) {
+    public CommonDTO<AddressEntity> getAddressInfoByUserId(long userId) {
         CommonDTO<AddressEntity> result = new CommonDTO<>();
         result.setResultList(addressRepository.findAllByUserId(userId));
         result.setExtra(StringUtil.getNewExtraMap(new MapDTO("defaultAddressId", userRepository.findByUserId(userId).get().getDefaultAddressId())));
@@ -181,7 +185,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonDTO<AddressEntity> setDefaultAddress(String addressId, String userId) {
+    public CommonDTO<AddressEntity> setDefaultAddress(long addressId, long userId) {
         CommonDTO<AddressEntity> result = new CommonDTO<>();
         UserEntity entity = userRepository.findByUserId(userId).get();
         entity.setDefaultAddressId(addressId);
@@ -233,7 +237,7 @@ public class UserServiceImpl implements UserService {
             });
             List<AddressEntity> addressEntities = addressRepository.findAllByUserId(vo.getUserId());
             if (null == addressEntities || addressEntities.size() < 1) {
-                userEntity.setDefaultAddressId("");
+                userEntity.setDefaultAddressId(-1);
                 userRepository.saveAndFlush(userEntity);
             }
             result.setMessage("删除成功" + message.toString());

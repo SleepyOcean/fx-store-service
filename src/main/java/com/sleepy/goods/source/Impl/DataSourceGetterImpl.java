@@ -1,0 +1,141 @@
+package com.sleepy.goods.source.Impl;
+
+import com.alibaba.fastjson.JSON;
+import com.sleepy.goods.dto.CartDTO;
+import com.sleepy.goods.entity.*;
+import com.sleepy.goods.repository.*;
+import com.sleepy.goods.source.DataSourceGetter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * 数据获取服务实现类
+ *
+ * @author gehoubao
+ * @create 2020-05-20 17:02
+ **/
+@Component
+public class DataSourceGetterImpl implements DataSourceGetter {
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    AddressRepository addressRepository;
+
+    @Autowired
+    GoodsRepository goodsRepository;
+    @Autowired
+    GoodsSpecRepository goodsSpecRepository;
+    @Autowired
+    GoodsSpecKeyRepository goodsSpecKeyRepository;
+    @Autowired
+    GoodsSpecValueRepository goodsSpecValueRepository;
+
+    @Override
+    public UserEntity getUser(long id) {
+        UserEntity entity = userRepository.getOne(id);
+        return entity;
+    }
+
+    @Override
+    public UserEntity getUser(String id) {
+        return getUser(Long.parseLong(id));
+    }
+
+    @Override
+    public Map<Long, CartDTO> getCartMap(UserEntity user) {
+        String cartString = user.getCartInfo();
+        List<CartDTO> carts = JSON.parseArray(cartString, CartDTO.class);
+        Map<Long, CartDTO> cartsMap = carts.stream().collect(Collectors.toMap(CartDTO::getGoodsSpecId, c -> c));
+        return cartsMap;
+    }
+
+    @Override
+    public Map<Long, CartDTO> getCartMap(long userId) {
+        return getCartMap(getUser(userId));
+    }
+
+    @Override
+    public AddressEntity getAddress(long addressId) {
+        AddressEntity address = addressRepository.getOne(addressId);
+        return address;
+    }
+
+    @Override
+    public AddressEntity getAddress(String addressId) {
+        return getAddress(Long.parseLong(addressId));
+    }
+
+    @Override
+    public GoodsSpecEntity getGoodSpec(long specId) {
+        GoodsSpecEntity spec = goodsSpecRepository.getOne(specId);
+        return spec;
+    }
+
+    @Override
+    public List<GoodsSpecEntity> getGoodSpecList(long goodId) {
+        List<GoodsSpecEntity> specs = goodsSpecRepository.findAllByGoodsId(goodId);
+        return specs;
+    }
+
+    @Override
+    public Map<Long, GoodsSpecEntity> getGoodSpecMap(long goodId) {
+        List<GoodsSpecEntity> specs = getGoodSpecList(goodId);
+        Map<Long, GoodsSpecEntity> specMap = specs.stream().collect(Collectors.toMap(GoodsSpecEntity::getId, s -> s));
+        return specMap;
+    }
+
+    @Override
+    public Map<Long, List<GoodsSpecEntity>> getGoodSpecListMap(List<Long> goodsIds) {
+        List<GoodsSpecEntity> specs = goodsSpecRepository.findAllByGoodsIdIn(goodsIds);
+        Map<Long, List<GoodsSpecEntity>> result = new HashMap<>(goodsIds.size());
+        specs.forEach(s -> {
+            List<GoodsSpecEntity> item = result.get(s.getGoodsId());
+            if (item == null) {
+                item = new ArrayList<>();
+            }
+            item.add(s);
+            result.put(s.getGoodsId(), item);
+        });
+        return result;
+    }
+
+    @Override
+    public List<GoodsSpecEntity> getGoodSpecList(List<Long> specIds) {
+        List<GoodsSpecEntity> specs = goodsSpecRepository.findAllByIdIn(specIds);
+        return specs;
+    }
+
+    @Override
+    public Map<Long, GoodsSpecEntity> getGoodSpecMap(List<Long> specIds) {
+        List<GoodsSpecEntity> specs = getGoodSpecList(specIds);
+        Map<Long, GoodsSpecEntity> specMap = specs.stream().collect(Collectors.toMap(GoodsSpecEntity::getId, s -> s));
+        return specMap;
+    }
+
+    @Override
+    public GoodsSpecKeyEntity getGoodSpecKey(Long specKeyId) {
+        GoodsSpecKeyEntity entity = goodsSpecKeyRepository.getOne(specKeyId);
+        return entity;
+    }
+
+    @Override
+    public GoodsSpecValueEntity getGoodSpecValue(Long specValueId) {
+        GoodsSpecValueEntity entity = goodsSpecValueRepository.getOne(specValueId);
+        return entity;
+    }
+
+    @Override
+    public GoodsEntity getGoods(Long goodsId) {
+        GoodsEntity entity = goodsRepository.getOne(goodsId);
+        return entity;
+    }
+
+}

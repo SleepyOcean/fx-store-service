@@ -12,8 +12,8 @@ import java.util.Optional;
  * @create 2020-02-14 21:23
  **/
 
-public interface UserRepository extends JpaRepository<UserEntity, String> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByOpenId(String openId);
 
-    Optional<UserEntity> findByUserId(String userId);
+    Optional<UserEntity> findByUserId(Long userId);
 }

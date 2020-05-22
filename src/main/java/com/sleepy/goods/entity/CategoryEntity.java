@@ -40,10 +40,15 @@ public class CategoryEntity {
     @Column(name = "sub_category", columnDefinition = "TEXT COMMENT '子分类信息'")
     private String subCategory;
 
+    @Column(name = "deleted", columnDefinition = "TINYINT NOT NULL COMMENT '是否有效， 0-默认，1-已删除'")
+    private Integer deleted;
+
     public CategoryEntity() {
+        this.deleted = 0;
     }
 
     public CategoryEntity(CategoryNewVO category) {
+        this();
         this.categoryType = category.getCategoryType();
         this.categoryTypeName = category.getCategoryTypeName();
         this.categoryCode = category.getCategoryCode();

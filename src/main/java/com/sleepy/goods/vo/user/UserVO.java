@@ -17,7 +17,7 @@ public class UserVO {
 
     private String wxOpenId;
 
-    private String userId;
+    private Long userId;
     private String userName;
     private String deliveryInfo;
     private String cartInfo;

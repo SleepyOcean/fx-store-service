@@ -30,4 +30,11 @@ public class AdminEntity {
 
     @Column(name = "contact", columnDefinition = "VARCHAR(32) COMMENT '联系方式'")
     private String contact;
+
+    @Column(name = "deleted", columnDefinition = "TINYINT NOT NULL COMMENT '是否有效， 0-默认，1-已删除'")
+    private Integer deleted;
+
+    public AdminEntity() {
+        this.deleted = 0;
+    }
 }

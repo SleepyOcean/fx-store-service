@@ -3,8 +3,6 @@ package com.sleepy.goods.vo.goods;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -33,10 +31,6 @@ public class GoodsUpdateVO {
     @ApiModelProperty("商品子分类")
     private Integer subCategory;
 
-    @Min(value = 0, message = "库存剩余storageNum不能为空")
-    @ApiModelProperty("库存剩余")
-    private Integer storageNum;
-
     @NotEmpty(message = "库存单位storageUnit不能为空")
     @ApiModelProperty("库存单位")
     private String storageUnit;
@@ -49,22 +43,6 @@ public class GoodsUpdateVO {
     @ApiModelProperty("图片地址")
     private String imgUrl;
 
-//    @NotEmpty
     @ApiModelProperty("详情图片地址，多个以逗号分隔")
     private String detailImgUrl;
-
-//    @NotNull(message = "商品会员价不能为空")
-    @DecimalMin(value = "0")
-    @ApiModelProperty("商品会员价")
-    private Double goodsPriceVip;
-
-    @NotNull(message = "商品原价不能为空")
-    @DecimalMin(value = "0")
-    @ApiModelProperty("商品原价")
-    private Double goodsPriceOrigin;
-
-    @NotNull(message = "商品现价不能为空")
-    @DecimalMin(value = "0")
-    @ApiModelProperty("商品现价")
-    private Double goodsPriceNow;
 }

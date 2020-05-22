@@ -17,7 +17,7 @@ import javax.validation.constraints.NotEmpty;
 public class AddressNewVO {
     @NotEmpty(message = "用户ID不能为空")
     @ApiModelProperty("用户ID")
-    private String userId;
+    private Long userId;
 
     @NotEmpty(message = "收货人联系方式contact不能为空")
     @ApiModelProperty("收货人联系方式contact")

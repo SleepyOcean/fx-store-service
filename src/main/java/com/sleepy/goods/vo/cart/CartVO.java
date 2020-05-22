@@ -1,4 +1,4 @@
-package com.sleepy.goods.vo;
+package com.sleepy.goods.vo.cart;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,10 +17,10 @@ import java.util.List;
 public class CartVO {
     @ApiModelProperty("用户ID")
     private String userId;
-    @ApiModelProperty("商品ID")
-    private String goodsId;
+    @ApiModelProperty("具体规格商品ID")
+    private Long specId;
     @ApiModelProperty("数量变化值")
     private Integer valueChange;
-    @ApiModelProperty("批量删除的商品ID数组")
-    private List<String> goodsIdsDeleted;
+    @ApiModelProperty("批量删除的具体规格商品ID数组")
+    private List<String> specIdsDeleted;
 }

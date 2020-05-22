@@ -47,7 +47,7 @@ public class StringUtil {
      * @param string
      * @return
      */
-    public static boolean isNotNullOrEmpty(String string) {
+    public static boolean isNotNullOrEmpty(Object string) {
         return !isNullOrEmpty(string);
     }
 
@@ -95,6 +95,10 @@ public class StringUtil {
 
     public static String getDateString(Date date) {
         return formatDate(date, DATE_DEFAULT_FORMAT);
+    }
+
+    public static String currentTimeStr() {
+        return getDateString(new Date());
     }
 
     /**
