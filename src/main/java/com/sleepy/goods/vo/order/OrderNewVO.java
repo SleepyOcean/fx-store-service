@@ -23,7 +23,7 @@ public class OrderNewVO {
 
     @NotEmpty(message = "用户userId不能为空")
     @ApiModelProperty("用户ID")
-    private Long userId;
+    private String userId;
 
     @NotNull(message = "商品规格ID集合specIds不能为空")
     @ApiModelProperty("具体规格商品ID数组")

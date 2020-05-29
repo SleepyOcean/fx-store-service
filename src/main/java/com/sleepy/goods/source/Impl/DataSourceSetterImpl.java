@@ -36,7 +36,7 @@ public class DataSourceSetterImpl implements DataSourceSetter {
     GoodsSpecValueRepository goodsSpecValueRepository;
 
     @Override
-    public void saveCart(long userId, Map<Long, CartDTO> cart) {
+    public void saveCart(String userId, Map<Long, CartDTO> cart) {
         UserEntity user = userRepository.getOne(userId);
         saveCart(user, cart);
     }

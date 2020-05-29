@@ -2,6 +2,7 @@ package com.sleepy.goods.entity;
 
 import com.sleepy.goods.vo.user.AddressNewVO;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -14,13 +15,14 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "fx_address")
+@GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class AddressEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private long addressId;
-    @Column(name = "user_id", columnDefinition = "INT COMMENT '用户id'")
-    private long userId;
+    @GeneratedValue(generator = "jpa-uuid")
+    @Column(length = 64)
+    private String addressId;
+    @Column(name = "user_id", columnDefinition = "VARCHAR(64) COMMENT '用户id'")
+    private String userId;
     @Column(name = "contact", columnDefinition = "VARCHAR(32) COMMENT '收货人联系方式'")
     private String contact;
     @Column(name = "contact_name", columnDefinition = "VARCHAR(64) COMMENT '收货人姓名'")

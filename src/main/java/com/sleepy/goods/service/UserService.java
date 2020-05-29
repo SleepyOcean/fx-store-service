@@ -22,7 +22,7 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    CommonDTO<UserDTO> getUserInfoById(long id) throws Exception;
+    CommonDTO<UserDTO> getUserInfoById(String id) throws Exception;
 
     /**
      * 通过微信Code获取用户信息
@@ -68,7 +68,7 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    CommonDTO<AddressEntity> getAddressInfo(long addressId, long userId) throws Exception;
+    CommonDTO<AddressEntity> getAddressInfo(String addressId, String userId) throws Exception;
 
     /**
      * 通过userId获取地址信息
@@ -76,7 +76,7 @@ public interface UserService {
      * @param userId
      * @return
      */
-    CommonDTO<AddressEntity> getAddressInfoByUserId(long userId);
+    CommonDTO<AddressEntity> getAddressInfoByUserId(String userId);
 
     /**
      * 设置默认地址
@@ -85,7 +85,7 @@ public interface UserService {
      * @param userId
      * @return
      */
-    CommonDTO<AddressEntity> setDefaultAddress(long addressId, long userId);
+    CommonDTO<AddressEntity> setDefaultAddress(String addressId, String userId);
 
     /**
      * 更新地址信息

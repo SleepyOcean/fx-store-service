@@ -18,11 +18,11 @@ public class AddressVO {
 
     @ApiModelProperty("地址信息ID")
     @NotEmpty(message = "addressId不能为空")
-    private Long addressId;
+    private String addressId;
 
     @ApiModelProperty("用户ID")
     @NotEmpty(message = "userId不能为空")
-    private Long userId;
+    private String userId;
 
     @ApiModelProperty("收货人联系方式contact")
     private String contact;

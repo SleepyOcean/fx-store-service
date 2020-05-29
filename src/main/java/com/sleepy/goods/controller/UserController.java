@@ -29,7 +29,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/getById")
-    public CommonDTO<UserDTO> getById(@RequestParam("userId") Long id) throws Exception {
+    public CommonDTO<UserDTO> getById(@RequestParam("userId") String id) throws Exception {
         if (!StringUtil.isNullOrEmpty(id)) {
             return userService.getUserInfoById(id);
         } else {
@@ -91,7 +91,7 @@ public class UserController {
     }
 
     @GetMapping("/address/get")
-    public CommonDTO<AddressEntity> getAddressInfo(@RequestParam(value = "userId") Long userId, @RequestParam(value = "addressId", required = false) Long addressId) throws Exception {
+    public CommonDTO<AddressEntity> getAddressInfo(@RequestParam(value = "userId") String userId, @RequestParam(value = "addressId", required = false) String addressId) throws Exception {
         if (StringUtil.isNotNullOrEmpty(addressId)) {
             return userService.getAddressInfo(addressId, userId);
         } else {

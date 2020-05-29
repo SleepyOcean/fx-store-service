@@ -11,7 +11,7 @@ import java.util.Map;
  **/
 public interface DataSourceSetter {
 
-    void saveCart(long userId, Map<Long, CartDTO> cart);
+    void saveCart(String userId, Map<Long, CartDTO> cart);
 
     void saveCart(UserEntity user, Map<Long, CartDTO> cart);
 

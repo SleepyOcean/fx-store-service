@@ -21,8 +21,8 @@ public class OrderEntity {
     @Column(length = 64)
     private String orderId;
 
-    @Column(name = "user_id", columnDefinition = "INT NOT NULL COMMENT '用户id'")
-    private long userId;
+    @Column(name = "user_id", columnDefinition = "VARCHAR(64) NOT NULL COMMENT '用户id'")
+    private String userId;
 
     @Column(name = "goods", columnDefinition = "TEXT NOT NULL COMMENT '订单商品信息数组字符串（不同商品以逗号分隔），格式:  商品id:商品个数:商品价格:备注 '")
     private String goods;

@@ -11,13 +11,6 @@ import java.util.Map;
  * @create 2020-05-20 17:03
  **/
 public interface DataSourceGetter {
-    /**
-     * 通过用户ID获取用户对象
-     *
-     * @param id
-     * @return
-     */
-    UserEntity getUser(long id);
 
     /**
      * 通过用户ID获取用户对象
@@ -41,19 +34,17 @@ public interface DataSourceGetter {
      * @param userId
      * @return
      */
-    Map<Long, CartDTO> getCartMap(long userId);
-
-    AddressEntity getAddress(long addressId);
+    Map<Long, CartDTO> getCartMap(String userId);
 
     AddressEntity getAddress(String addressId);
 
     GoodsSpecEntity getGoodSpec(long specId);
 
-    List<GoodsSpecEntity> getGoodSpecList(long goodId);
+    List<GoodsSpecEntity> getGoodSpecList(String goodId);
 
-    Map<Long, GoodsSpecEntity> getGoodSpecMap(long goodId);
+    Map<Long, GoodsSpecEntity> getGoodSpecMap(String goodId);
 
-    Map<Long, List<GoodsSpecEntity>> getGoodSpecListMap(List<Long> goodsIds);
+    Map<String, List<GoodsSpecEntity>> getGoodSpecListMap(List<String> goodsIds);
 
     List<GoodsSpecEntity> getGoodSpecList(List<Long> specIds);
 
@@ -63,5 +54,5 @@ public interface DataSourceGetter {
 
     GoodsSpecValueEntity getGoodSpecValue(Long specValueId);
 
-    GoodsEntity getGoods(Long goodsId);
+    GoodsEntity getGoods(String goodsId);
 }

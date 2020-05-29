@@ -56,8 +56,8 @@ public class GoodsServiceImpl implements GoodsService {
         }
         JpqlResultSet set = jpqlExecutor.exec("goods.findGoods", params, GoodsEntity.class);
         List<GoodsEntity> data = set.getResultList();
-        List<Long> goodsIds = data.stream().map(g -> g.getGoodsId()).collect(Collectors.toList());
-        Map<Long, List<GoodsSpecEntity>> goodSpecListMap = dataSourceGetter.getGoodSpecListMap(goodsIds);
+        List<String> goodsIds = data.stream().map(g -> g.getGoodsId()).collect(Collectors.toList());
+        Map<String, List<GoodsSpecEntity>> goodSpecListMap = dataSourceGetter.getGoodSpecListMap(goodsIds);
         result.setResultList(data);
         result.setTotal(set.getTotal());
         List<CategoryEntity> goodsCategory = getGoodsCategory(1);

@@ -15,7 +15,7 @@ import java.util.List;
 public class GoodsVO {
 
     @ApiModelProperty("商品ID")
-    private Long goodsId;
+    private String goodsId;
 
     @ApiModelProperty("商品数组")
     private List<GoodsNewVO> goods;

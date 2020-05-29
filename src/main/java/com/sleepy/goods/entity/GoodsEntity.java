@@ -3,6 +3,7 @@ package com.sleepy.goods.entity;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.goods.GoodsNewVO;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -15,11 +16,12 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "fx_goods")
+@GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class GoodsEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private Long goodsId;
+    @GeneratedValue(generator = "jpa-uuid")
+    @Column(length = 64)
+    private String goodsId;
 
     @Column(name = "goods_name", columnDefinition = "VARCHAR(256) NOT NULL COMMENT '商品名称'")
     private String goodsName;

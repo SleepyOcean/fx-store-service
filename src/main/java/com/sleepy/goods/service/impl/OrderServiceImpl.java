@@ -162,9 +162,9 @@ public class OrderServiceImpl implements OrderService {
         String cartString = entity.getCartInfo();
         if (StringUtil.isNotNullOrEmpty(cartString)) {
             JSONObject carts = JSON.parseObject(cartString);
-            Map<Long, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
+            Map<String, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
             List<CartDTO> data = new ArrayList<>(cartsMap.values());
-            List<Long> goodsIds = new ArrayList<>(cartsMap.keySet());
+            List<String> goodsIds = new ArrayList<>(cartsMap.keySet());
             List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(goodsIds);
 
             result.setResultList(data);
@@ -323,10 +323,10 @@ public class OrderServiceImpl implements OrderService {
 
     private CommonDTO<OrderEntity> getOrderDetailResult(List<OrderEntity> data) {
         CommonDTO<OrderEntity> result = new CommonDTO<>();
-        Set<Long> goodsIds = new HashSet<>();
+        Set<String> goodsIds = new HashSet<>();
         data.forEach(d -> {
             for (String s : d.getGoods().split(",")) {
-                goodsIds.add(Long.parseLong(s.split(":")[0]));
+                goodsIds.add(s.split(":")[0]);
             }
         });
         List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(goodsIds));

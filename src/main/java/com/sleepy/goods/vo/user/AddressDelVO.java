@@ -19,12 +19,12 @@ import java.util.List;
 public class AddressDelVO {
     @NotNull(message = "待删除的地址信息ID集合deleteAddressIds不能为空")
     @ApiModelProperty("待删除的地址信息ID集合")
-    private List<Long> deleteAddressIds;
+    private List<String> deleteAddressIds;
 
     @ApiModelProperty("新的默认地址ID")
-    private Long defaultAddressId;
+    private String defaultAddressId;
 
     @NotEmpty(message = "用户userId不能为空")
     @ApiModelProperty("用户ID")
-    private Long userId;
+    private String userId;
 }

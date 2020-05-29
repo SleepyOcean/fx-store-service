@@ -50,11 +50,15 @@ public class UserServiceImpl implements UserService {
     JpqlExecutor jpqlExecutor;
 
     @Override
-    public CommonDTO<UserDTO> getUserInfoById(long id) {
+    public CommonDTO<UserDTO> getUserInfoById(String id) {
         Map<String, Object> parameters = new HashMap<>(4);
         parameters.put("userId", id);
         List<UserDTO> entities = findUser(parameters);
-        return getUserDetailResult(entities);
+        if (entities != null && entities.size() > 0) {
+            return getUserDetailResult(entities);
+        } else {
+            return new CommonDTO<>();
+        }
     }
 
     private CommonDTO<UserDTO> getUserDetailResult(List<UserDTO> entities) {
@@ -63,7 +67,7 @@ public class UserServiceImpl implements UserService {
         String cartString = data.getCartInfo();
         if (StringUtil.isNotNullOrEmpty(cartString)) {
             JSONObject carts = JSON.parseObject(cartString);
-            Map<Long, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
+            Map<String, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
             List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(cartsMap.keySet()));
             result.setExtra(StringUtil.getNewExtraMap(new MapDTO("goods", goods),
                     new MapDTO("carts", new ArrayList<>(cartsMap.values())),
@@ -165,10 +169,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonDTO<AddressEntity> getAddressInfo(long addressId, long userId) throws Exception {
+    public CommonDTO<AddressEntity> getAddressInfo(String addressId, String userId) throws Exception {
         CommonDTO<AddressEntity> result = new CommonDTO<>();
         AddressEntity entity = addressRepository.findById(addressId).get();
-        if (entity.getUserId() == userId) {
+        if (entity.getUserId().equals(userId)) {
             result.setResult(entity);
         } else {
             StringUtil.throwExceptionInfo("userId与地址信息不匹配");
@@ -177,7 +181,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonDTO<AddressEntity> getAddressInfoByUserId(long userId) {
+    public CommonDTO<AddressEntity> getAddressInfoByUserId(String userId) {
         CommonDTO<AddressEntity> result = new CommonDTO<>();
         result.setResultList(addressRepository.findAllByUserId(userId));
         result.setExtra(StringUtil.getNewExtraMap(new MapDTO("defaultAddressId", userRepository.findByUserId(userId).get().getDefaultAddressId())));
@@ -185,7 +189,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonDTO<AddressEntity> setDefaultAddress(long addressId, long userId) {
+    public CommonDTO<AddressEntity> setDefaultAddress(String addressId, String userId) {
         CommonDTO<AddressEntity> result = new CommonDTO<>();
         UserEntity entity = userRepository.findByUserId(userId).get();
         entity.setDefaultAddressId(addressId);
@@ -237,7 +241,7 @@ public class UserServiceImpl implements UserService {
             });
             List<AddressEntity> addressEntities = addressRepository.findAllByUserId(vo.getUserId());
             if (null == addressEntities || addressEntities.size() < 1) {
-                userEntity.setDefaultAddressId(-1);
+                userEntity.setDefaultAddressId("");
                 userRepository.saveAndFlush(userEntity);
             }
             result.setMessage("删除成功" + message.toString());

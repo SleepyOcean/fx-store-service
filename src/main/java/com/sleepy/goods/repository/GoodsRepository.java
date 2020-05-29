@@ -12,8 +12,8 @@ import java.util.List;
  * @create 2020-02-14 21:23
  **/
 
-public interface GoodsRepository extends JpaRepository<GoodsEntity, Long> {
+public interface GoodsRepository extends JpaRepository<GoodsEntity, String> {
     List<GoodsEntity> findAllByGoodsNameIsLike(String goodsName);
 
-    List<GoodsEntity> findAllByGoodsIdIn(List<Long> ids);
+    List<GoodsEntity> findAllByGoodsIdIn(List<String> ids);
 }

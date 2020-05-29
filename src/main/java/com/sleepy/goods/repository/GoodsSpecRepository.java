@@ -16,7 +16,7 @@ public interface GoodsSpecRepository extends JpaRepository<GoodsSpecEntity, Long
 
     List<GoodsSpecEntity> findAllByIdIn(List<Long> ids);
 
-    List<GoodsSpecEntity> findAllByGoodsId(Long goodsId);
+    List<GoodsSpecEntity> findAllByGoodsId(String goodsId);
 
-    List<GoodsSpecEntity> findAllByGoodsIdIn(List<Long> goodsIds);
+    List<GoodsSpecEntity> findAllByGoodsIdIn(List<String> goodsIds);
 }

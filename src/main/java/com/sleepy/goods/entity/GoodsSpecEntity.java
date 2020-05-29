@@ -21,8 +21,8 @@ public class GoodsSpecEntity {
     @Column
     private Long id;
 
-    @Column(name = "goods_id")
-    private Long goodsId;
+    @Column(name = "goods_id", columnDefinition = "VARCHAR(64) NOT NULL COMMENT '商品id'")
+    private String goodsId;
 
     @Column(name = "spec", columnDefinition = "VARCHAR(256) COMMENT '规格'")
     private String spec;

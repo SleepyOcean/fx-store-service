@@ -1,6 +1,7 @@
 package com.sleepy.goods.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -11,11 +12,12 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "fx_user")
+@GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private long userId;
+    @GeneratedValue(generator = "jpa-uuid")
+    @Column(length = 64)
+    private String userId;
 
     @Column(name = "open_id", columnDefinition = "VARCHAR(128) NOT NULL COMMENT '微信用户唯一标识'")
     private String openId;
@@ -29,8 +31,8 @@ public class UserEntity {
     @Column(name = "cart_info", columnDefinition = "TEXT COMMENT '购物车信息：{goodSpecId: {goodSpecId, selectedNum} ...}'")
     private String cartInfo;
 
-    @Column(name = "default_address_id", columnDefinition = "INT COMMENT '默认地址id'")
-    private long defaultAddressId;
+    @Column(name = "default_address_id", columnDefinition = "VARCHAR(64) COMMENT '默认地址id'")
+    private String defaultAddressId;
 
     @Column(name = "merchant_info", columnDefinition = "VARCHAR(1024) COMMENT '商家信息'")
     private String merchantInfo;
