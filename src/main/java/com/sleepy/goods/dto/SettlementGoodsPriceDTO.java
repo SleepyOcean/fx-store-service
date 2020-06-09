@@ -10,7 +10,7 @@ import lombok.Data;
  **/
 @Data
 public class SettlementGoodsPriceDTO {
-    private Long goodSpecId;
+    private String goodSpecId;
     private Double priceNow;
     private Integer amount;
     private Double totalPrice;

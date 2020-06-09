@@ -18,7 +18,7 @@ public class CartVO {
     @ApiModelProperty("用户ID")
     private String userId;
     @ApiModelProperty("具体规格商品ID")
-    private Long specId;
+    private String specId;
     @ApiModelProperty("数量变化值")
     private Integer valueChange;
     @ApiModelProperty("批量删除的具体规格商品ID数组")

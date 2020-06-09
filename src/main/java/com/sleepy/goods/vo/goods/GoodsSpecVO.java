@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class GoodsSpecVO {
     @NotNull(message = "商品规格ID(specId)不能为空")
-    private Long specId;
+    private String specId;
 
     private String spec;
 

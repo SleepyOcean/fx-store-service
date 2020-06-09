@@ -86,6 +86,11 @@ public class GoodsController {
         return result;
     }
 
+    @GetMapping("/spec/get")
+    public CommonDTO<GoodsSpecEntity> getSpec(@RequestParam(value = "goodsId") String goodsId) throws Exception {
+        return goodsService.getSpecByGoodsId(goodsId);
+    }
+
     @PostMapping("/spec/add")
     public CommonDTO<GoodsSpecEntity> saveSpec(@RequestBody @Valid GoodsSpecNewVO vo, BindingResult bindingResult) throws Exception {
         return goodsService.saveSpec(vo);

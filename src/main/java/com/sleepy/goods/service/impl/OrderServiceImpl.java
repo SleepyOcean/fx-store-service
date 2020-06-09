@@ -111,14 +111,14 @@ public class OrderServiceImpl implements OrderService {
         }
 
         AddressEntity address = dataSourceGetter.getAddress(vo.getAddressId());
-        Map<Long, GoodsSpecEntity> goodsSpecMap = dataSourceGetter.getGoodSpecMap(vo.getSpecIds());
+        Map<String, GoodsSpecEntity> goodsSpecMap = dataSourceGetter.getGoodSpecMap(vo.getSpecIds());
 
         OrderEntity entity = new OrderEntity(vo, address);
         JSONObject carts = JSON.parseObject(user.getCartInfo());
         double goodsTotalPrice = 0;
         List<SingleGoodOrderDTO> goodsInOrder = new ArrayList<>();
 
-        for (long specId : vo.getSpecIds()) {
+        for (String specId : vo.getSpecIds()) {
             JSONObject item = carts.getJSONObject(String.valueOf(specId));
             GoodsSpecEntity spec = goodsSpecMap.get(specId);
             // 校验商品是否被修改
@@ -178,7 +178,7 @@ public class OrderServiceImpl implements OrderService {
     public CommonDTO<CartDTO> updateCart(CartVO vo) throws Exception {
         if (!StringUtil.isNullOrEmpty(vo.getUserId())) {
             UserEntity user = dataSourceGetter.getUser(vo.getUserId());
-            Map<Long, CartDTO> cartMap = dataSourceGetter.getCartMap(user);
+            Map<String, CartDTO> cartMap = dataSourceGetter.getCartMap(user);
             CartDTO cart = cartMap.get(vo.getSpecId());
             if (cart == null) {
                 cart = new CartDTO(vo.getSpecId());
@@ -207,7 +207,7 @@ public class OrderServiceImpl implements OrderService {
     public CommonDTO<CartDTO> deleteGoodsInCart(CartVO vo) {
         CommonDTO<CartDTO> result = new CommonDTO<>();
         UserEntity user = dataSourceGetter.getUser(vo.getUserId());
-        Map<Long, CartDTO> cart = dataSourceGetter.getCartMap(user);
+        Map<String, CartDTO> cart = dataSourceGetter.getCartMap(user);
         vo.getSpecIdsDeleted().forEach(specId -> {
             if (cart.get(specId) != null) {
                 cart.remove(specId);
@@ -241,7 +241,7 @@ public class OrderServiceImpl implements OrderService {
         }
         CommonDTO<SettlementDTO> result = new CommonDTO<>();
         Double totalPrice, goodsTotalPrice = 0d;
-        Map<Long, SettlementGoodsPriceDTO> goodsPriceMap = new HashMap<>(vo.getGoodSpecMap().size());
+        Map<String, SettlementGoodsPriceDTO> goodsPriceMap = new HashMap<>(vo.getGoodSpecMap().size());
 
         List<GoodsSpecEntity> goodsSpecList = dataSourceGetter.getGoodSpecList(new ArrayList<>(vo.getGoodSpecMap().keySet()));
         for (GoodsSpecEntity spec : goodsSpecList) {

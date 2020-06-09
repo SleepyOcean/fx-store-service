@@ -27,7 +27,7 @@ public class OrderNewVO {
 
     @NotNull(message = "商品规格ID集合specIds不能为空")
     @ApiModelProperty("具体规格商品ID数组")
-    private List<Long> specIds;
+    private List<String> specIds;
 
     @NotEmpty(message = "收货地址信息addressId不能为空")
     @ApiModelProperty("收货地址信息ID")

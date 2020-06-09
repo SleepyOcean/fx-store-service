@@ -36,13 +36,13 @@ public class DataSourceSetterImpl implements DataSourceSetter {
     GoodsSpecValueRepository goodsSpecValueRepository;
 
     @Override
-    public void saveCart(String userId, Map<Long, CartDTO> cart) {
+    public void saveCart(String userId, Map<String, CartDTO> cart) {
         UserEntity user = userRepository.getOne(userId);
         saveCart(user, cart);
     }
 
     @Override
-    public void saveCart(UserEntity user, Map<Long, CartDTO> cart) {
+    public void saveCart(UserEntity user, Map<String, CartDTO> cart) {
         user.setCartInfo(JSON.toJSONString(cart));
         userRepository.saveAndFlush(user);
     }
@@ -50,11 +50,16 @@ public class DataSourceSetterImpl implements DataSourceSetter {
     @Override
     public GoodsSpecEntity saveGoodSpec(GoodsSpecEntity entity) {
         entity.setUpdateTime(StringUtil.currentTimeStr());
+        GoodsEntity goods = goodsRepository.getOne(entity.getGoodsId());
+        if (null == goods.getGoodsMinPrice() || goods.getGoodsMinPrice() > entity.getGoodsPriceNow()) {
+            goods.setGoodsMinPrice(entity.getGoodsPriceNow());
+            goodsRepository.saveAndFlush(goods);
+        }
         return goodsSpecRepository.saveAndFlush(entity);
     }
 
     @Override
-    public void deleteGoodSpec(Long specId) {
+    public void deleteGoodSpec(String specId) {
         goodsSpecRepository.deleteById(specId);
     }
 

@@ -12,9 +12,9 @@ import java.util.List;
  * @create 2020-02-14 21:23
  **/
 
-public interface GoodsSpecRepository extends JpaRepository<GoodsSpecEntity, Long> {
+public interface GoodsSpecRepository extends JpaRepository<GoodsSpecEntity, String> {
 
-    List<GoodsSpecEntity> findAllByIdIn(List<Long> ids);
+    List<GoodsSpecEntity> findAllByIdIn(List<String> ids);
 
     List<GoodsSpecEntity> findAllByGoodsId(String goodsId);
 

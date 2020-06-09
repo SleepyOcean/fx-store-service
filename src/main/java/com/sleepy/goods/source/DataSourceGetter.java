@@ -26,7 +26,7 @@ public interface DataSourceGetter {
      * @param user
      * @return
      */
-    Map<Long, CartDTO> getCartMap(UserEntity user);
+    Map<String, CartDTO> getCartMap(UserEntity user);
 
     /**
      * 通过用户ID获取购物车对象Map
@@ -34,21 +34,21 @@ public interface DataSourceGetter {
      * @param userId
      * @return
      */
-    Map<Long, CartDTO> getCartMap(String userId);
+    Map<String, CartDTO> getCartMap(String userId);
 
     AddressEntity getAddress(String addressId);
 
-    GoodsSpecEntity getGoodSpec(long specId);
+    GoodsSpecEntity getGoodSpec(String specId);
 
     List<GoodsSpecEntity> getGoodSpecList(String goodId);
 
-    Map<Long, GoodsSpecEntity> getGoodSpecMap(String goodId);
+    Map<String, GoodsSpecEntity> getGoodSpecMap(String goodId);
 
     Map<String, List<GoodsSpecEntity>> getGoodSpecListMap(List<String> goodsIds);
 
-    List<GoodsSpecEntity> getGoodSpecList(List<Long> specIds);
+    List<GoodsSpecEntity> getGoodSpecList(List<String> specIds);
 
-    Map<Long, GoodsSpecEntity> getGoodSpecMap(List<Long> specIds);
+    Map<String, GoodsSpecEntity> getGoodSpecMap(List<String> specIds);
 
     GoodsSpecKeyEntity getGoodSpecKey(Long specKeyId);
 

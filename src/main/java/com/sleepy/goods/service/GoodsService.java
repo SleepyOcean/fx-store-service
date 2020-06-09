@@ -37,4 +37,6 @@ public interface GoodsService {
     CommonDTO<GoodsSpecValueEntity> updateSpecValue(GoodsSpecValueVO vo);
 
     CommonDTO<GoodsSpecValueEntity> deleteSpecValue(GoodsSpecValueVO vo);
+
+    CommonDTO<GoodsSpecEntity> getSpecByGoodsId(String goodsId);
 }

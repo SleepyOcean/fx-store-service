@@ -57,11 +57,10 @@ public class GoodsServiceImpl implements GoodsService {
         JpqlResultSet set = jpqlExecutor.exec("goods.findGoods", params, GoodsEntity.class);
         List<GoodsEntity> data = set.getResultList();
         List<String> goodsIds = data.stream().map(g -> g.getGoodsId()).collect(Collectors.toList());
-        Map<String, List<GoodsSpecEntity>> goodSpecListMap = dataSourceGetter.getGoodSpecListMap(goodsIds);
         result.setResultList(data);
         result.setTotal(set.getTotal());
         List<CategoryEntity> goodsCategory = getGoodsCategory(1);
-        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("category", goodsCategory), new MapDTO("goodsSpec", goodSpecListMap)));
+        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("category", goodsCategory)));
         return result;
     }
 
@@ -73,6 +72,7 @@ public class GoodsServiceImpl implements GoodsService {
         }
         good = dataSourceSetter.saveGood(good);
         CommonDTO<GoodsEntity> result = new CommonDTO<>();
+        result.setResult(good);
         result.setMessage("创建成功");
         return result;
     }
@@ -167,6 +167,14 @@ public class GoodsServiceImpl implements GoodsService {
         CommonDTO<GoodsSpecValueEntity> result = new CommonDTO<>();
         dataSourceSetter.deleteGoodSpecValue(vo.getSpecValueId());
         result.setMessage("【商品规格Value】删除成功");
+        return result;
+    }
+
+    @Override
+    public CommonDTO<GoodsSpecEntity> getSpecByGoodsId(String goodsId) {
+        CommonDTO<GoodsSpecEntity> result = new CommonDTO<>();
+        List<GoodsSpecEntity> data = dataSourceGetter.getGoodSpecList(goodsId);
+        result.setResultList(data);
         return result;
     }
 

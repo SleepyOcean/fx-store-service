@@ -23,6 +23,6 @@ public class CartSettlementVO {
     private String userId;
 
     @NotNull(message = "购物车结算商品数据goods不能为空")
-    private Map<Long, Integer> goodSpecMap;
+    private Map<String, Integer> goodSpecMap;
 
 }

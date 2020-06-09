@@ -44,18 +44,17 @@ public class DataSourceGetterImpl implements DataSourceGetter {
     }
 
     @Override
-    public Map<Long, CartDTO> getCartMap(UserEntity user) {
+    public Map<String, CartDTO> getCartMap(UserEntity user) {
         String cartString = user.getCartInfo();
         if (StringUtil.isNullOrEmpty(cartString)) {
             return new HashMap<>();
         }
-        List<CartDTO> carts = JSON.parseArray(cartString, CartDTO.class);
-        Map<Long, CartDTO> cartsMap = carts.stream().collect(Collectors.toMap(CartDTO::getGoodsSpecId, c -> c));
+        Map<String, CartDTO> cartsMap = (Map<String, CartDTO>) JSON.parse(cartString);
         return cartsMap;
     }
 
     @Override
-    public Map<Long, CartDTO> getCartMap(String userId) {
+    public Map<String, CartDTO> getCartMap(String userId) {
         return getCartMap(getUser(userId));
     }
 
@@ -66,7 +65,7 @@ public class DataSourceGetterImpl implements DataSourceGetter {
     }
 
     @Override
-    public GoodsSpecEntity getGoodSpec(long specId) {
+    public GoodsSpecEntity getGoodSpec(String specId) {
         GoodsSpecEntity spec = goodsSpecRepository.getOne(specId);
         return spec;
     }
@@ -78,9 +77,9 @@ public class DataSourceGetterImpl implements DataSourceGetter {
     }
 
     @Override
-    public Map<Long, GoodsSpecEntity> getGoodSpecMap(String goodId) {
+    public Map<String, GoodsSpecEntity> getGoodSpecMap(String goodId) {
         List<GoodsSpecEntity> specs = getGoodSpecList(goodId);
-        Map<Long, GoodsSpecEntity> specMap = specs.stream().collect(Collectors.toMap(GoodsSpecEntity::getId, s -> s));
+        Map<String, GoodsSpecEntity> specMap = specs.stream().collect(Collectors.toMap(GoodsSpecEntity::getId, s -> s));
         return specMap;
     }
 
@@ -100,15 +99,15 @@ public class DataSourceGetterImpl implements DataSourceGetter {
     }
 
     @Override
-    public List<GoodsSpecEntity> getGoodSpecList(List<Long> specIds) {
+    public List<GoodsSpecEntity> getGoodSpecList(List<String> specIds) {
         List<GoodsSpecEntity> specs = goodsSpecRepository.findAllByIdIn(specIds);
         return specs;
     }
 
     @Override
-    public Map<Long, GoodsSpecEntity> getGoodSpecMap(List<Long> specIds) {
+    public Map<String, GoodsSpecEntity> getGoodSpecMap(List<String> specIds) {
         List<GoodsSpecEntity> specs = getGoodSpecList(specIds);
-        Map<Long, GoodsSpecEntity> specMap = specs.stream().collect(Collectors.toMap(GoodsSpecEntity::getId, s -> s));
+        Map<String, GoodsSpecEntity> specMap = specs.stream().collect(Collectors.toMap(GoodsSpecEntity::getId, s -> s));
         return specMap;
     }
 

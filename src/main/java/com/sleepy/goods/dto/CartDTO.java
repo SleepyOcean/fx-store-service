@@ -12,11 +12,11 @@ import lombok.Data;
 @Data
 public class CartDTO {
 
-    private Long goodsSpecId;
+    private String goodsSpecId;
 
     private Integer selectedNum;
 
-    public CartDTO(Long specId) {
+    public CartDTO(String specId) {
         this.goodsSpecId = specId;
         this.selectedNum = 0;
     }

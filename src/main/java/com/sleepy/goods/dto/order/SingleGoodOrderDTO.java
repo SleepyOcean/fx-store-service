@@ -13,12 +13,12 @@ import lombok.Data;
  **/
 @Data
 public class SingleGoodOrderDTO {
-    private Long specId;
+    private String specId;
     private Integer selectedNum;
     private Double goodsPriceNow;
     private String note;
 
-    public SingleGoodOrderDTO(Long specId, Integer selectedNum, Double goodsPriceNow, String note) {
+    public SingleGoodOrderDTO(String specId, Integer selectedNum, Double goodsPriceNow, String note) {
         this.specId = specId;
         this.selectedNum = selectedNum;
         this.goodsPriceNow = goodsPriceNow;

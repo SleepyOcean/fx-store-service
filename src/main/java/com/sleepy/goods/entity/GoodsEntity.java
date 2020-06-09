@@ -38,6 +38,9 @@ public class GoodsEntity {
     @Column(name = "storage_unit", columnDefinition = "VARCHAR(4) COMMENT '库存单位'")
     private String storageUnit;
 
+    @Column(name = "price_min", columnDefinition = "DOUBLE(10,2) COMMENT '商品最低价'")
+    private Double goodsMinPrice;
+
     @Column(name = "goods_desc", columnDefinition = "VARCHAR(255) COMMENT '商品描述'")
     private String goodsDesc;
 
