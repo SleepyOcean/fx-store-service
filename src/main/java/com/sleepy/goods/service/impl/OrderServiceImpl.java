@@ -158,19 +158,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public CommonDTO<CartDTO> getCartList(String userId) {
         CommonDTO<CartDTO> result = new CommonDTO<>();
-        UserEntity entity = dataSourceGetter.getUser(userId);
-        String cartString = entity.getCartInfo();
-        if (StringUtil.isNotNullOrEmpty(cartString)) {
-            JSONObject carts = JSON.parseObject(cartString);
-            Map<String, CartDTO> cartsMap = StringUtil.jsonObjectToMap(carts);
-            List<CartDTO> data = new ArrayList<>(cartsMap.values());
-            List<String> goodsIds = new ArrayList<>(cartsMap.keySet());
-            List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(goodsIds);
 
-            result.setResultList(data);
-            result.setExtra(StringUtil.getNewExtraMap(new MapDTO("goods", goods)));
-            result.setTotal((long) data.size());
-        }
+        Map<String, CartDTO> cartsMap = dataSourceGetter.getCartMap(userId);
+        List<CartDTO> data = new ArrayList<>(cartsMap.values());
+        List<String> specsIds = new ArrayList<>(cartsMap.keySet());
+        List<GoodsSpecEntity> specs = dataSourceGetter.getGoodSpecList(specsIds);
+        List<String> goodsIds = specs.stream().map(s -> s.getGoodsId()).collect(Collectors.toList());
+        List<GoodsEntity> goods = dataSourceGetter.getGoodsList(goodsIds);
+        result.setResultList(data);
+        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("goods", goods), new MapDTO("specList", specs)));
+        result.setTotal((long) data.size());
         return result;
     }
 

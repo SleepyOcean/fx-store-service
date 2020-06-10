@@ -1,6 +1,5 @@
 package com.sleepy.goods.dto;
 
-import com.sleepy.goods.common.Constant;
 import lombok.Data;
 
 /**
@@ -21,8 +20,8 @@ public class CartDTO {
         this.selectedNum = 0;
     }
 
-    @Override
-    public String toString() {
-        return goodsSpecId + Constant.PROPERTY_SPLIT_SYMBOL + selectedNum;
+    public CartDTO(String goodsSpecId, Integer selectedNum) {
+        this.goodsSpecId = goodsSpecId;
+        this.selectedNum = selectedNum;
     }
 }

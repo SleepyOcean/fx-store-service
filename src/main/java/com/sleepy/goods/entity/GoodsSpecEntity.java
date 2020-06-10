@@ -1,5 +1,6 @@
 package com.sleepy.goods.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sleepy.goods.util.StringUtil;
 import com.sleepy.goods.vo.goods.GoodsSpecNewVO;
 import lombok.Data;
@@ -17,6 +18,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "fx_goods_spec")
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class GoodsSpecEntity {
     @Id
     @GeneratedValue(generator = "jpa-uuid")

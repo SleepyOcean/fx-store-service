@@ -55,4 +55,6 @@ public interface DataSourceGetter {
     GoodsSpecValueEntity getGoodSpecValue(Long specValueId);
 
     GoodsEntity getGoods(String goodsId);
+
+    List<GoodsEntity> getGoodsList(List<String> goodsIds);
 }

@@ -9,10 +9,7 @@ import com.sleepy.goods.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +47,8 @@ public class DataSourceGetterImpl implements DataSourceGetter {
             return new HashMap<>();
         }
         Map<String, CartDTO> cartsMap = (Map<String, CartDTO>) JSON.parse(cartString);
-        return cartsMap;
+        return JSON.parseArray(JSON.toJSONString(cartsMap.values()), CartDTO.class)
+                .stream().collect(Collectors.toMap(CartDTO::getGoodsSpecId, cart -> cart));
     }
 
     @Override
@@ -127,6 +125,12 @@ public class DataSourceGetterImpl implements DataSourceGetter {
     public GoodsEntity getGoods(String goodsId) {
         GoodsEntity entity = goodsRepository.getOne(goodsId);
         return entity;
+    }
+
+    @Override
+    public List<GoodsEntity> getGoodsList(List<String> goodsIds) {
+        List<GoodsEntity> list = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(new HashSet<>(goodsIds)));
+        return list;
     }
 
 }
