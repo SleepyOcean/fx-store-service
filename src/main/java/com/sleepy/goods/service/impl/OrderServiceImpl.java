@@ -320,16 +320,20 @@ public class OrderServiceImpl implements OrderService {
 
     private CommonDTO<OrderEntity> getOrderDetailResult(List<OrderEntity> data) {
         CommonDTO<OrderEntity> result = new CommonDTO<>();
-        Set<String> goodsIds = new HashSet<>();
+        Set<String> goodSpecIds = new HashSet<>();
         data.forEach(d -> {
             for (String s : d.getGoods().split(",")) {
-                goodsIds.add(s.split(":")[0]);
+                goodSpecIds.add(s.split(":")[0]);
             }
         });
+        List<GoodsSpecEntity> goodSpec = dataSourceGetter.getGoodSpecList(new ArrayList<>(goodSpecIds));
+        Set<String> goodsIds = goodSpec.stream().map(s -> s.getGoodsId()).collect(Collectors.toSet());
         List<GoodsEntity> goods = goodsRepository.findAllByGoodsIdIn(new ArrayList<>(goodsIds));
 
         result.setResultList(data);
-        result.setExtra(StringUtil.getNewExtraMap(new MapDTO("goods", goods.stream().collect(Collectors.toMap(GoodsEntity::getGoodsId, p -> p)))));
+        result.setExtra(StringUtil.getNewExtraMap(
+                new MapDTO("goods", goods.stream().collect(Collectors.toMap(GoodsEntity::getGoodsId, p -> p))),
+                new MapDTO("goodSpec", goodSpec.stream().collect(Collectors.toMap(GoodsSpecEntity::getId, s -> s)))));
         result.setTotal((long) data.size());
         return result;
     }

@@ -1,6 +1,7 @@
 package com.sleepy.goods.vo.cart;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -22,7 +23,8 @@ public class CartSettlementVO {
     @NotEmpty(message = "userId不能为空")
     private String userId;
 
-    @NotNull(message = "购物车结算商品数据goods不能为空")
+    @NotNull(message = "购物车结算商品数据goodSpecMap不能为空")
+    @ApiModelProperty("购物车结算商品map，key 为商品规格Id，value 为对应规格商品的数量")
     private Map<String, Integer> goodSpecMap;
 
 }
